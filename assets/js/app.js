@@ -179,7 +179,11 @@ function app() {
     genMax: 10,
     genCount: 1,
     genTasks: 8,
-    // Story problems are silent by default; this checkbox voices them.
+    // Two INDEPENDENT read-aloud switches (both off by default):
+    //  genSay      - the global one next to "Užduotys: visos": every question
+    //                that is NOT a story problem;
+    //  genSayStory - the one in the Pasakojimai group: the story problems.
+    genSay: false,
     genSayStory: false,
     genGroups: {},
     genPresets: {},
@@ -715,7 +719,8 @@ function app() {
         const types = this.genPickedTypes();
         const params = [`max=${this.genMax}`, `count=${count}`, `tasks=${tasks}`];
         if (types.length) params.push(`types=${encodeURIComponent(types.join(','))}`);
-        if (this.genSayStory) params.push('say=1');
+        if (this.genSay) params.push('say=1'); else params.push('say=0');
+        if (this.genSayStory) params.push('sayStory=1'); else params.push('sayStory=0');
         const query = params.join('&');
         const data = await api(`generate?${query}`);
         const list = (data.quizzes || []).map((q) => normalizeQuiz(q, { source: 'generated' }));
@@ -818,6 +823,13 @@ function app() {
           changed: () => this.onAnswerChanged(index),
         });
         body.appendChild(inst.el);
+
+        // A silenced question (say: false, or a story with no opt-in) hides the
+        // per-condition 🔊 buttons its type added itself (e.g. every `write`
+        // item carries one), not just the head button above.
+        if (!sayAllowed(question)) {
+          for (const btn of inst.el.querySelectorAll('.say-btn')) btn.remove();
+        }
 
         card.append(head, body, result);
         dom.host.appendChild(card);

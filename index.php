@@ -45,6 +45,31 @@ function asset(string $rel): string
     return '/' . ltrim($rel, '/') . '?v=' . $version;
 }
 
+/**
+ * Cache-busting import map for the ES modules `assets/js/app.js` imports.
+ *
+ * The `?v=<mtime>` on the entry <script> does NOT bust a nested
+ * `import './x.js'`: the browser caches every module by its own resolved URL,
+ * so an edited helper would keep running from cache. The import map maps each
+ * module's absolute path to its own mtime-versioned URL, so every changed file
+ * gets a fresh URL and nothing stale is ever served.
+ *
+ * @return array<string,string> e.g. ['/assets/js/figures.js' => '/assets/js/figures.js?v=1728…']
+ */
+function js_import_map(): array
+{
+    $map = [];
+    foreach (glob(APP_DIR . '/assets/js/*.js') as $file) {
+        $rel = 'assets/js/' . basename($file);
+        $map['/' . $rel] = asset($rel);
+    }
+    foreach (glob(APP_DIR . '/assets/js/vendor/*.js') as $file) {
+        $rel = 'assets/js/vendor/' . basename($file);
+        $map['/' . $rel] = asset($rel);
+    }
+    return $map;
+}
+
 /** JSON that is safe to inline inside a <script> tag. */
 function json_for_script(mixed $data): string
 {
@@ -101,12 +126,17 @@ function api_dispatch(string $rest, string $method): void
             } else {
                 $focus = '';
             }
-            // Story problems are silent by default: ?say=1 (the picker checkbox)
-            // opts them into the read-aloud button.
-            $sayStory = isset($_GET['say']) && in_array((string) $_GET['say'], ['1', 'true', 'yes', 'on'], true);
+            // Two INDEPENDENT read-aloud switches, both off by default:
+            //  · ?say=1        - every question that is NOT a story problem
+            //                    (the global checkbox next to „Užduotys: visos“)
+            //  · ?sayStory=1   - the story/storyChoice problems
+            //                    (the checkbox inside the Pasakojimai group)
+            // Absent (previews, old links) = leave each type's own default alone.
+            $sayOthers = isset($_GET['say']) ? in_array((string) $_GET['say'], ['1', 'true', 'yes', 'on'], true) : null;
+            $sayStory = isset($_GET['sayStory']) ? in_array((string) $_GET['sayStory'], ['1', 'true', 'yes', 'on'], true) : null;
             $quizzes = quiz_generate_batch($types, $max, $count, $tasks, $focus);
-            if ($sayStory) {
-                gen_voice_stories($quizzes);
+            if ($sayOthers !== null || $sayStory !== null) {
+                gen_voice_apply($quizzes, $sayOthers, $sayStory);
             }
             json_out(['quizzes' => array_map('tts_quiz_with_tokens', $quizzes)]);
             return;
@@ -190,6 +220,7 @@ header('X-Content-Type-Options: nosniff');
   window.__GEN_TYPE_GROUPS__ = <?= json_for_script($genGroups) ?>;
   window.__GEN_PRESETS__ = <?= json_for_script($genPresets) ?>;
 </script>
+<script type="importmap"><?= json_for_script(['imports' => js_import_map()]) ?></script>
 <script type="module" src="<?= e(asset('assets/js/app.js')) ?>"></script>
 </head>
 <body>
@@ -267,14 +298,19 @@ header('X-Content-Type-Options: nosniff');
             </label>
           </div>
 
-          <div class="mt-3 flex flex-wrap gap-2">
+          <div class="mt-3 flex flex-wrap items-center gap-2">
             <button class="btn btn--amber" @click="newGenerated()" :disabled="loading">
-              ✨ Generuoti testą<span class="text-base opacity-90" x-text="genStars() ? starRow(genStars()) : ''"></span>
+              ✨ Generuoti testą
             </button>
             <button class="btn btn--ghost" @click="toggleGenPicker()"
                     :aria-expanded="genPickerOpen ? 'true' : 'false'" aria-controls="gen-types">
               <span x-text="genPickerOpen ? '⬆️ Paslėpti užduotis' : genPickLabel()"></span>
             </button>
+            <label class="type-voice"
+                   title="Įgarsinti visus kitus (ne pasakojimų) uždavinius. Pasakojimų uždaviniai įgarsinami atskirai – jų grupėje yra savas mygtukas.">
+              <input type="checkbox" class="type-voice__box" x-model="genSay">
+              <span>🔊 Įgarsinti</span>
+            </label>
           </div>
 
           <div class="mt-4" id="gen-types" x-show="genPickerOpen" x-cloak>
@@ -300,7 +336,7 @@ header('X-Content-Type-Options: nosniff');
                                 :aria-pressed="isGenType(type)" x-text="label"></button>
                       </template>
                       <label class="type-voice" x-show="group === 'Pasakojimai'" x-cloak
-                             title="Pasakojimų uždaviniai pagal nutylėjimą neįgarsinami – juos reikia perskaityti. Pažymėk, jei nori, kad būtų perskaityti garsiai.">
+                             title="Įgarsinti pasakojimų uždavinius (atskirai nuo kitų uždavinių). Pagal nutylėjimą pasakojimai yra tyliai – juos reikia perskaityti.">
                         <input type="checkbox" class="type-voice__box" x-model="genSayStory">
                         <span>🔊 Įgarsinti</span>
                       </label>

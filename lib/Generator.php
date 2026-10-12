@@ -1543,23 +1543,33 @@ function quiz_generate_batch(mixed $types = [], int $max = 10, int $count = 1, i
 }
 
 /**
- * Turn the read-aloud button ON for the story problems of generated quizzes
- * (the "įgarsinti" checkbox next to the story type in the picker).
+ * Apply the generator's two INDEPENDENT read-aloud switches.
  *
- * Story questions are silent by default - a word problem is meant to be READ -
- * so voicing them is an explicit opt-in; every other type keeps its button.
+ * Backs the two "įgarsinti" checkboxes in the picker (both off by default):
+ *  - $others: the global one next to "Užduotys: visos" - every question that
+ *    is NOT a story problem (true = voice it, false = silence it);
+ *  - $story:  the one inside the Pasakojimai group - the story/storyChoice
+ *    problems only (they are silent by default: a word problem is meant to be
+ *    READ, so this is what voices them).
  *
- * @param list<array> $quizzes modified in place (questions get `say => true`)
+ * A null argument keeps that group's own default (a speaker everywhere but
+ * stories).
+ *
+ * @param  list<array>  $quizzes  modified in place (questions get `say`)
+ * @param  bool|null    $others   voice/silence the non-story questions
+ * @param  bool|null    $story    voice/silence the story questions
  */
-function gen_voice_stories(array &$quizzes): void
+function gen_voice_apply(array &$quizzes, ?bool $others, ?bool $story): void
 {
     foreach ($quizzes as &$quiz) {
         if (!isset($quiz['questions']) || !is_array($quiz['questions'])) {
             continue;
         }
         foreach ($quiz['questions'] as $index => $question) {
-            if (in_array($question['type'] ?? '', ['story', 'storyChoice'], true)) {
-                $quiz['questions'][$index]['say'] = true;
+            $isStory = in_array($question['type'] ?? '', ['story', 'storyChoice'], true);
+            $value = $isStory ? $story : $others;
+            if ($value !== null) {
+                $quiz['questions'][$index]['say'] = $value;
             }
         }
     }

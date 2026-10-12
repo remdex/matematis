@@ -565,7 +565,7 @@ Colours simply do not apply to emoji.
 | `GET /api/list` | `{ "quizzes": [ { id, title, subtitle, emoji, color, count } ] }` |
 | `GET /api/quiz/<id>` | the quiz JSON (404 when unknown) |
 | `GET /api/random?exclude=<id>` | a random existing quiz (🎲 button) |
-| `GET /api/generate?types=a,b,c&max=5|10|20&count=1…20&tasks=1…50` | `{ "quizzes": [ … ] }` — freshly generated quizzes made of exactly those question types (`types` empty/unknown = every type). Add `&say=1` to give the generated `story`/`storyChoice` questions the read-aloud button (off by default) |
+| `GET /api/generate?types=a,b,c&max=5|10|20&count=1…20&tasks=1…50` | `{ "quizzes": [ … ] }` — freshly generated quizzes made of exactly those question types (`types` empty/unknown = every type). Two independent read-aloud switches: `&say=1` voices every **non-story** question, `&sayStory=1` voices the **story** problems; both off by default (omitting one leaves that group at its own default) |
 | `GET /api/generate?focus=compare|count|draw|sum|sub|mixed&…` | the older preset form; each focus is a shorthand for a list of types (see §7) |
 | `POST /api/validate` | validates author JSON → `{ ok, errors[], warnings[], quiz }` (builder screen) |
 | `GET /api/tts?status=1` | `{ enabled, voice_id, model_id, cached_sentences, max_chars, … }` — no secrets; the page hides the 🔊 buttons when `enabled` is false |
@@ -863,10 +863,17 @@ of grouped by type. Without `tasks` the quiz still gets one question per builder
 selected types (so `?types=domino` alone gives exactly one exercise, and every
 `story`/`storyChoice` variant is shown).
 
-Story problems are **silent by default** (a word problem is meant to be read). Ticking
-the **🔊 Įgarsinti** checkbox next to the type chips in the *Pasakojimai* group sends
-`say=1` to `/api/generate`, which stamps `"say": true` on every generated
-`story`/`storyChoice` question (`gen_voice_stories()`); the other types are untouched.
+The picker has **two independent “🔊 Įgarsinti” checkboxes** (both off by default), so a
+generated test is silent until voice is asked for:
+
+- the one next to **⚙️ Užduotys: visos** sends `say=1` and voices **every question
+except the story problems** (`say=0` silences them);
+- the one inside the **Pasakojimai** group sends `sayStory=1` and voices the
+  `story`/`storyChoice` problems only — they are silent by default because a word
+  problem is meant to be **read**.
+
+`gen_voice_apply()` applies the two; omitting a parameter leaves that group at its own
+default (a 🔊 everywhere except stories).
 
 A selection that matches a preset exactly keeps the preset name, so the stars a child
 already earned for "Sudėtis" (or "Atimtis") stay attached to it (see
