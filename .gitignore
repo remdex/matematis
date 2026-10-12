@@ -1,0 +1,8 @@
+# Generated speech (the ElevenLabs mp3 cache) is not source code.
+# cache/tts/<sha1>.mp3 + <sha1>.json, cache/tts-limit/<ip-hash>.json
+cache/
+
+# The filled-in settings (the ElevenLabs API key) never belong in the repo.
+# Copy settings.ini.default.php to /etc/qu_lt/settings.ini.php instead - and
+# note that anything left in this directory is downloadable as plain text.
+settings.ini.php

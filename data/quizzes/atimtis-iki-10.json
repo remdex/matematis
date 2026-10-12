@@ -1,0 +1,323 @@
+{
+  "id": "atimtis-iki-10",
+  "title": "Atimtis",
+  "subtitle": "Atimtis iki 10 · paveikslai, domino, skaičių bankas",
+  "emoji": "➖",
+  "color": "rose",
+  "grade": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "subtractPicture",
+      "instruction": "Suskaičiuok daiktus ir parašyk atimties veiksmą.",
+      "hint": "Įrašyk tris skaičius: kiek yra, kiek nubraukta ir kiek liko.",
+      "rows": [
+        {
+          "id": "r1",
+          "left": {
+            "shape": "star",
+            "count": 6,
+            "color": "amber"
+          },
+          "right": 2
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "type": "subtractPicture",
+      "instruction": "Suskaičiuok daiktus ir parašyk atimties veiksmą.",
+      "hint": "Įrašyk tris skaičius: kiek yra, kiek nubraukta ir kiek liko.",
+      "rows": [
+        {
+          "id": "r1",
+          "left": {
+            "shape": "🍎",
+            "count": 5,
+            "color": "red"
+          },
+          "right": 3
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "type": "subtractPicture",
+      "instruction": "Suskaičiuok daiktus ir parašyk atimties veiksmą.",
+      "hint": "Įrašyk tris skaičius: kiek yra, kiek nubraukta ir kiek liko.",
+      "rows": [
+        {
+          "id": "r1",
+          "left": {
+            "shape": "circle",
+            "count": 7,
+            "color": "sky"
+          },
+          "right": 4
+        }
+      ]
+    },
+    {
+      "id": "q4",
+      "type": "subtractPicture",
+      "instruction": "Suskaičiuok daiktus ir parašyk, kiek liko.",
+      "hint": "Pirma suskaičiuok visus, paskui nubrauktus.",
+      "write": "result",
+      "rows": [
+        {
+          "id": "r1",
+          "left": {
+            "shape": "🐟",
+            "count": 8,
+            "color": "teal"
+          },
+          "right": 5
+        }
+      ]
+    },
+    {
+      "id": "q5",
+      "type": "crossOutExtra",
+      "instruction": "Turi likti tiek, kiek parašyta. Nubrauk, kiek reikia atimti.",
+      "hint": "Suskaičiuok visus apskritimus, paskui nubrauk tiek, kad liktų nurodytas skaičius.",
+      "items": [
+        {
+          "id": "m1",
+          "target": 2,
+          "have": 5,
+          "shape": "circle",
+          "color": "sky"
+        },
+        {
+          "id": "m2",
+          "target": 3,
+          "have": 6,
+          "shape": "circle",
+          "color": "violet"
+        },
+        {
+          "id": "m3",
+          "target": 1,
+          "have": 4,
+          "shape": "circle",
+          "color": "emerald"
+        }
+      ]
+    },
+    {
+      "id": "q6",
+      "type": "subtractPair",
+      "instruction": "Atlik atimties veiksmus. Nereikalingą skaičių nubrauk.",
+      "hint": "Bakstelk du skaičius – didesnį dėk į pirmą langelį.",
+      "items": [
+        {
+          "id": "b1",
+          "target": 3,
+          "bank": [2, 5, 1]
+        },
+        {
+          "id": "b2",
+          "target": 4,
+          "bank": [1, 6, 2]
+        },
+        {
+          "id": "b3",
+          "target": 5,
+          "bank": [5, 9, 4]
+        }
+      ]
+    },
+    {
+      "id": "q7",
+      "type": "equalDifferences",
+      "instruction": "Taip įrašyk skaičius, kad abiejų veiksmų gautum trikampyje parašytą skaičių.",
+      "hint": "Abiejose lygybės pusėse turi būti tiek pat.",
+      "items": [
+        {
+          "id": "e1",
+          "target": 2,
+          "bank": [1, 3, 5, 3]
+        },
+        {
+          "id": "e2",
+          "target": 3,
+          "bank": [2, 5, 7, 4]
+        },
+        {
+          "id": "e3",
+          "target": 1,
+          "bank": [1, 2, 4, 3]
+        }
+      ]
+    },
+    {
+      "id": "q8",
+      "type": "subtractDomino",
+      "instruction": "Suskaičiuok taškus abiejose pusėse ir parašyk skirtumą.",
+      "hint": "Pirmiausia suskaičiuok kairę pusę, paskui dešinę.",
+      "write": "result",
+      "rows": [
+        {
+          "id": "d1",
+          "left": 3,
+          "right": 2
+        }
+      ]
+    },
+    {
+      "id": "q9",
+      "type": "subtractDomino",
+      "instruction": "Suskaičiuok taškus abiejose pusėse ir parašyk atimties veiksmą.",
+      "hint": "Pirmiausia suskaičiuok kairę pusę, paskui dešinę.",
+      "rows": [
+        {
+          "id": "d1",
+          "left": 6,
+          "right": 4
+        }
+      ]
+    },
+    {
+      "id": "q10",
+      "type": "subtractCheck",
+      "instruction": "Pažymėk atimties veiksmus, kurių atsakymas yra 3.",
+      "hint": "Pažymėk visus veiksmus, kuriuos atėmus lieka 3.",
+      "target": 3,
+      "items": [
+        {
+          "id": "c1",
+          "a": 5,
+          "b": 2
+        },
+        {
+          "id": "c2",
+          "a": 4,
+          "b": 2
+        },
+        {
+          "id": "c3",
+          "a": 6,
+          "b": 3
+        },
+        {
+          "id": "c4",
+          "a": 8,
+          "b": 4
+        },
+        {
+          "id": "c5",
+          "a": 7,
+          "b": 4
+        },
+        {
+          "id": "c6",
+          "a": 9,
+          "b": 5
+        }
+      ]
+    },
+    {
+      "id": "q11",
+      "type": "match",
+      "instruction": "Sujunk atimties veiksmą su jį vaizduojančiu paveikslėliu. Atlik šiuos veiksmus.",
+      "hint": "Brėžk liniją nuo veiksmo iki paveikslėlio, o tada įrašyk skirtumą.",
+      "op": "-",
+      "result": true,
+      "left": [
+        {
+          "id": "l1",
+          "a": 6,
+          "b": 2
+        },
+        {
+          "id": "l2",
+          "a": 5,
+          "b": 1
+        },
+        {
+          "id": "l3",
+          "a": 4,
+          "b": 3
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "left": {
+            "shape": "🍎",
+            "count": 6
+          },
+          "right": {
+            "shape": "🍎",
+            "count": 2
+          }
+        },
+        {
+          "id": "r2",
+          "left": {
+            "shape": "⭐",
+            "count": 5
+          },
+          "right": {
+            "shape": "⭐",
+            "count": 1
+          }
+        },
+        {
+          "id": "r3",
+          "left": {
+            "shape": "🐟",
+            "count": 4
+          },
+          "right": {
+            "shape": "🐟",
+            "count": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "q12",
+      "type": "subtractPicture",
+      "instruction": "Suskaičiuok daiktus ir parašyk atimties veiksmą.",
+      "hint": "Įrašyk tris skaičius: kiek yra, kiek nubraukta ir kiek liko.",
+      "rows": [
+        {
+          "id": "r1",
+          "left": {
+            "shape": "hexagon",
+            "count": 9,
+            "color": "indigo"
+          },
+          "right": 6
+        }
+      ]
+    },
+    {
+      "id": "q13",
+      "type": "missingNumberSub",
+      "instruction": "Įrašyk trūkstamą skaičių.",
+      "hint": "Skaičiuok atgal – ko trūksta, kad veiksmas būtų teisingas?",
+      "rows": [
+        {
+          "id": "m1",
+          "a": 9,
+          "b": 7,
+          "blank": "left"
+        },
+        {
+          "id": "m2",
+          "a": 8,
+          "b": 1,
+          "blank": "left"
+        },
+        {
+          "id": "m3",
+          "a": 10,
+          "b": 4,
+          "blank": "middle"
+        }
+      ]
+    }
+  ]
+}

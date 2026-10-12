@@ -1,0 +1,53 @@
+{
+  "id": "palygink-figuras",
+  "title": "Palygink figūras",
+  "subtitle": "Įrašyk ženklą  >  <  =",
+  "emoji": "⚖️",
+  "color": "sky",
+  "grade": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "compare",
+      "instruction": "Suskaičiuok figūras ir įrašyk reikiamą ženklą.",
+      "hint": "Daugiau – >, mažiau – <, tiek pat – =",
+      "left": { "kind": "figures", "shape": "square", "count": 3, "color": "amber" },
+      "right": { "kind": "figures", "shape": "square", "count": 2, "color": "amber" }
+    },
+    {
+      "id": "q2",
+      "type": "compare",
+      "instruction": "Palygink trikampius.",
+      "left": { "kind": "figures", "shape": "triangle", "count": 9, "color": "emerald" },
+      "right": { "kind": "figures", "shape": "triangle", "count": 10, "color": "emerald" }
+    },
+    {
+      "id": "q3",
+      "type": "compare",
+      "instruction": "Palygink figūrų skaičių.",
+      "left": { "kind": "figures", "shape": "square", "count": 4, "color": "violet" },
+      "right": { "kind": "figures", "shape": "square", "count": 4, "color": "rose" }
+    },
+    {
+      "id": "q4",
+      "type": "compare",
+      "instruction": "Kuriame langelyje yra daugiau?",
+      "left": { "kind": "figures", "shape": "circle", "count": 7, "color": "sky" },
+      "right": { "kind": "figures", "shape": "star", "count": 7, "color": "amber" }
+    },
+    {
+      "id": "q5",
+      "type": "compare",
+      "instruction": "Palygink, ko yra daugiau.",
+      "left": { "kind": "figures", "shape": "heart", "count": 8, "color": "rose" },
+      "right": { "kind": "figures", "shape": "heart", "count": 5, "color": "pink" }
+    },
+    {
+      "id": "q6",
+      "type": "compare",
+      "instruction": "Palygink kamuoliukus.",
+      "left": { "kind": "figures", "shape": "ball", "count": 6, "color": "teal" },
+      "right": { "kind": "figures", "shape": "ball", "count": 9, "color": "teal" }
+    }
+  ]
+}

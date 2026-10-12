@@ -1,0 +1,1212 @@
+/* ==========================================================================
+   Matematis — Tailwind source
+   Build:  npm i -D tailwindcss@3 && npx tailwindcss -c tailwind.config.js \
+           -i assets/css/input.css -o assets/css/app.css --minify
+   (see README.md; build.sh does this for you)
+   ========================================================================== */
+
+/* Nunito Sans comes from Google Fonts — the stylesheet <link> in the <head> of
+   index.php loads it (family 'Nunito Sans', variable weight 200-1000, with
+   italic + optical-size axes). Nothing is self hosted, so there are no
+   @font-face rules here; the body stack below just names the family. */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    /* Nunito Sans is loaded from Google Fonts (see index.php <head>). */
+    font-family: 'Nunito Sans', 'Segoe UI', Roboto, Arial, sans-serif;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #334155;
+    background: linear-gradient(180deg, #e0f2fe 0%, #f8fafc 45%, #fef3c7 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button {
+    touch-action: manipulation;
+  }
+  [x-cloak] {
+    display: none !important;
+  }
+  :focus-visible {
+    outline: 4px solid #38bdf8;
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  /* ---------------------------------------------------------------- shell */
+  .wrap {
+    @apply mx-auto w-full max-w-[1500px];
+  }
+  .brand {
+    @apply text-2xl font-extrabold text-sky-700 sm:text-3xl;
+  }
+  .card-surface {
+    @apply rounded-3xl border-4 border-white bg-white/95 p-4 shadow-lg sm:p-5;
+  }
+
+  /* -------------------------------------------------------------- buttons */
+  .btn {
+    @apply inline-flex select-none items-center justify-center gap-2 rounded-3xl px-5 font-extrabold shadow-lg transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none;
+    min-height: 3.5rem;
+    font-size: clamp(1.1rem, 2.6vw, 1.4rem);
+  }
+  .btn--primary {
+    @apply bg-sky-500 text-white hover:bg-sky-400;
+  }
+  .btn--success {
+    @apply bg-emerald-500 text-white hover:bg-emerald-400;
+  }
+  .btn--amber {
+    @apply bg-amber-400 text-amber-950 hover:bg-amber-300;
+  }
+  .btn--ghost {
+    @apply border-4 border-slate-200 bg-white text-slate-600 hover:border-slate-300;
+  }
+  .btn--lg {
+    @apply px-7;
+    min-height: 4.25rem;
+    font-size: clamp(1.25rem, 3vw, 1.6rem);
+  }
+  .icon-btn {
+    @apply inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-4 border-white bg-white/90 text-2xl shadow-md transition active:scale-95;
+  }
+
+  /* ----------------------------------------------------------- picker UI */
+  .quiz-card {
+    @apply flex w-full items-center gap-4 rounded-3xl border-4 border-white bg-white/95 p-4 text-left shadow-lg transition hover:-translate-y-1 hover:shadow-xl active:scale-[0.99];
+  }
+  .quiz-card__emoji {
+    @apply flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-4xl;
+    background: #f1f5f9;
+  }
+  .quiz-card__title {
+    @apply text-xl font-extrabold text-slate-800 sm:text-2xl;
+  }
+  .quiz-card__meta {
+    @apply text-base font-bold text-slate-500;
+  }
+  .section-title {
+    @apply mt-8 mb-3 text-xl font-extrabold text-slate-700;
+  }
+  .age-title {
+    @apply mt-6 mb-3 flex items-center gap-2 text-lg font-extrabold text-slate-600 sm:text-xl;
+  }
+  .age-title__badge {
+    @apply rounded-full bg-sky-500 px-3 py-1 text-base font-extrabold text-white;
+  }
+  .age-chip {
+    @apply shrink-0 rounded-full bg-sky-100 px-3 py-1 text-base font-extrabold text-sky-700;
+  }
+  .grade-title {
+    @apply mt-6 mb-3 flex items-center gap-2 text-lg font-extrabold text-slate-600 sm:text-xl;
+  }
+  .grade-title__badge {
+    @apply rounded-full bg-sky-500 px-3 py-1 text-base font-extrabold text-white;
+  }
+  .grade-chip {
+    @apply shrink-0 rounded-full bg-sky-100 px-3 py-1 text-base font-extrabold text-sky-700;
+  }
+
+  /* ------------------------------------------------------------- progress */
+  .progress-track {
+    @apply h-4 flex-1 overflow-hidden rounded-full bg-slate-200;
+  }
+  .progress-fill {
+    @apply h-full rounded-full bg-sky-400 transition-all duration-300;
+  }
+  .chip {
+    @apply inline-flex items-center rounded-full border-4 border-slate-200 bg-white px-4 py-1 text-base font-extrabold text-slate-500 transition active:scale-95;
+  }
+  .chip--on {
+    @apply border-sky-400 bg-sky-100 text-sky-700;
+  }  /* generator: which exercises should the new quiz be made of */
+  .gen-group {
+    @apply rounded-xl bg-slate-200 px-3 py-1 text-sm font-extrabold uppercase tracking-wide text-slate-600 transition active:scale-95;
+  }
+  .gen-group.is-on {
+    @apply bg-sky-500 text-white;
+  }
+  .type-chip {
+    @apply rounded-full border-4 border-slate-200 bg-white px-3 py-1.5 text-base font-bold text-slate-600 shadow-sm transition active:scale-95;
+  }
+  .type-chip.is-on {
+    @apply border-sky-400 bg-sky-100 text-sky-700;
+  }  /* generator: the "įgarsinti" opt-in next to the story types */
+  .type-voice {
+    @apply inline-flex cursor-pointer items-center gap-2 self-center rounded-full border-4 border-dashed border-slate-200 bg-white px-3 py-1.5 text-base font-bold text-slate-500 transition;
+  }
+  .type-voice__box {
+    @apply h-5 w-5 accent-sky-500;
+  }  /* one exercise of the hovered type, shown beside the picker */
+  .type-preview {
+    @apply rounded-2xl border-4 border-white bg-white/95 p-3 shadow-lg;
+  }
+  .type-preview__head {
+    @apply mb-2 flex items-center gap-2;
+  }
+  .type-preview__icon {
+    @apply text-xl;
+  }
+  .type-preview__label {
+    @apply min-w-0 text-base font-extrabold text-slate-700;
+  }
+  .type-preview__body {
+    @apply min-h-[12rem] max-h-[70vh] overflow-hidden rounded-xl bg-slate-50 p-2;
+  }
+  /* .type-preview__frame (width/scale/height) is set in app.js (PREVIEW_SCALE). */
+  .type-preview__placeholder {
+    @apply flex min-h-[12rem] items-center justify-center rounded-xl bg-slate-50 px-4 text-center text-base font-bold text-slate-400;
+  }
+  .type-preview__note {
+    @apply mt-2 text-center text-sm font-bold text-slate-400;
+  }
+  .type-preview__note--bad {
+    @apply text-rose-500;
+  }
+  .question-card--preview {
+    @apply border-0 p-3 shadow-none;
+  }  /* range input for "kiek testų iš karto" */
+  .slider {
+    @apply h-3 cursor-pointer appearance-none rounded-full bg-slate-200 outline-none;
+  }
+  .slider::-webkit-slider-thumb {
+    @apply h-7 w-7 cursor-pointer appearance-none rounded-full border-4 border-white bg-sky-500 shadow-md;
+  }
+  .slider::-moz-range-thumb {
+    @apply h-7 w-7 cursor-pointer rounded-full border-4 border-white bg-sky-500 shadow-md;
+  }
+
+  /* ------------------------------------------- one page per quiz (worksheet) */
+  .question-card {
+    @apply rounded-3xl border-4 border-white bg-white/95 p-4 shadow-lg sm:p-5;
+  }
+  .question-head {
+    @apply mb-3 flex items-start gap-3;
+  }
+  .question-number {
+    @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sky-100 text-lg font-black text-sky-600;
+  }
+  .question-instruction {
+    @apply text-xl font-extrabold leading-snug text-slate-800 sm:text-2xl;
+  }
+  .question-hint {
+    @apply text-base font-bold text-slate-500;
+  }
+  /* -------------------------------------------------- the task read aloud */
+  /* ElevenLabs voice: the 🔊 button lives in the question head, so a child that
+     cannot read the instruction (or the hint) can listen to it. */
+  .say-btn {
+    @apply ml-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-4 border-sky-200 bg-sky-50 shadow-sm transition active:scale-95;
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+  .say-btn:hover {
+    @apply border-sky-400 bg-sky-100;
+  }
+  /* Hidden until the server confirms it has an ElevenLabs key. */
+  .say-btn.is-off {
+    display: none;
+  }
+  .say-btn.is-loading {
+    @apply cursor-progress border-sky-300 bg-white;
+    animation: say-breathe 1s ease-in-out infinite;
+  }
+  .say-btn.is-playing {
+    @apply border-emerald-400 bg-emerald-100;
+    animation: say-breathe 0.9s ease-in-out infinite;
+  }
+  .say-btn.is-error {
+    @apply border-rose-400 bg-rose-100;
+  }
+  /* The smaller variant, used next to a single condition (`write` questions). */
+  .say-btn--sm {
+    @apply ml-0 h-9 w-9 border-[3px];
+    font-size: 1.05rem;
+  }
+  .prompt-line {
+    @apply flex w-full items-center justify-center gap-2;
+  }
+  .question-body {
+    @apply transition;
+  }
+  /* After Tikrinti the answers are frozen, but stay readable. */
+  .question-body.is-locked {
+    pointer-events: none;
+  }
+  .question-card.is-correct {
+    @apply border-emerald-300;
+  }
+  .question-card.is-wrong {
+    @apply border-rose-300;
+  }
+  .q-result {
+    display: none;
+  }
+  .q-result--ok {
+    @apply mt-3 flex items-center gap-2 rounded-2xl bg-emerald-100 px-3 py-2 text-lg font-extrabold text-emerald-700;
+  }
+  .q-result--bad {
+    @apply mt-3 flex items-center gap-2 rounded-2xl bg-rose-100 px-3 py-2 text-lg font-extrabold text-rose-700;
+  }
+  .q-block {
+    @apply flex flex-col gap-5;
+  }
+  .panel {
+    @apply flex w-full items-center justify-center rounded-3xl border-4 border-slate-200 bg-white p-3 shadow-inner;
+  }
+  .fig-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--per-row, 3), minmax(0, 1fr));
+    gap: clamp(2px, 0.6vw, 8px);
+    width: 100%;
+  }
+  .fig-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: center;
+    width: 100%;
+    max-width: 4.5rem;
+    aspect-ratio: 1 / 1;
+  }
+  .fig {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  /* take away: the figures of a subtraction picture that are crossed out */
+  .fig-cell.is-crossed {
+    position: relative;
+  }
+  .fig-cell.is-crossed::after {
+    content: '';
+    position: absolute;
+    left: 4%;
+    right: 4%;
+    top: 50%;
+    height: clamp(3px, 0.9vw, 6px);
+    border-radius: 3px;
+    background: #f43f5e;
+    transform: translateY(-50%) rotate(-24deg);
+  }
+  .number-box {
+    @apply flex items-center justify-center font-black leading-none text-slate-700;
+    font-size: clamp(3rem, 12vw, 4.5rem);
+  }
+
+  /* compare */
+  .compare-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: clamp(0.5rem, 2vw, 1.25rem);
+  }
+  /* On phones the two groups stack, so the figures stay big enough to count. */
+  @media (max-width: 639px) {
+    .compare-row {
+      grid-template-columns: minmax(0, 1fr);
+      justify-items: center;
+    }
+  }
+  .compare-side {
+    @apply relative pb-3;
+  }
+  .count-chip {
+    @apply absolute bottom-0 left-1/2 -translate-x-1/2 rounded-lg bg-slate-100 px-2 py-0.5 text-sm font-bold text-slate-500;
+  }
+  .symbol-slot {
+    @apply flex items-center justify-center rounded-full border-4 border-dashed border-sky-300 bg-white font-black text-sky-500;
+    width: clamp(3.25rem, 13vw, 5.5rem);
+    height: clamp(3.25rem, 13vw, 5.5rem);
+    font-size: clamp(1.75rem, 6vw, 2.75rem);
+  }
+  .symbol-slot.is-filled {
+    @apply border-solid border-sky-400 bg-sky-50;
+  }
+  .symbol-picker {
+    @apply flex flex-wrap items-center justify-center gap-3;
+  }
+  .symbol-btn {
+    @apply flex items-center justify-center rounded-2xl border-4 border-slate-200 bg-white font-black text-slate-600 shadow-md transition active:scale-95;
+    width: clamp(3.75rem, 15vw, 5.25rem);
+    height: clamp(3.75rem, 15vw, 5.25rem);
+    font-size: clamp(2rem, 7vw, 3rem);
+  }
+  .symbol-btn.is-picked {
+    @apply -translate-y-1 border-sky-400 bg-sky-100 text-sky-600;
+  }
+
+  /* compare two equations (compareExpressions): `3 + 4 ? 9 − 2` */
+  .eq-expr {
+    display: inline-flex;
+    align-items: center;
+    gap: clamp(0.35rem, 1.4vw, 0.7rem);
+  }
+  .symbol-slot--pick {
+    cursor: pointer;
+  }
+  .symbol-slot.is-active {
+    box-shadow: 0 0 0 6px rgba(56, 189, 248, 0.35);
+  }
+
+  /* compare grid */
+  .q-grid {
+    @apply grid gap-3;
+    grid-template-columns: 1fr;
+  }
+  .grid-row {
+    @apply flex items-center justify-between gap-2 rounded-2xl border-4 border-slate-100 bg-white p-2 shadow-sm;
+  }
+  .grid-num {
+    @apply flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 text-2xl font-black text-slate-700;
+  }
+  .segmented {
+    @apply flex gap-1 rounded-2xl bg-slate-100 p-1;
+  }
+  .seg-btn {
+    @apply flex h-11 w-11 items-center justify-center rounded-xl bg-white text-2xl font-black text-slate-600 shadow transition active:scale-95;
+  }
+  .seg-btn.is-picked {
+    @apply bg-sky-500 text-white;
+  }
+
+  /* number answers */
+  .scene-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+    gap: clamp(0.5rem, 2vw, 1rem);
+  }
+  .scene {
+    @apply flex flex-col items-center gap-2 rounded-3xl border-4 border-slate-200 bg-white p-3;
+  }
+  .scene-figures {
+    width: 100%;
+  }
+  .input-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+    gap: clamp(0.5rem, 2vw, 1rem);
+    justify-items: center;
+  }
+  .input-cell {
+    @apply flex w-full flex-col items-center gap-2;
+  }
+  .prompt {
+    @apply text-center text-lg font-extrabold text-slate-600;
+  }
+  .scene-marker {
+    @apply flex h-7 w-7 items-center justify-center rounded-full bg-amber-300 text-sm font-black text-amber-900;
+  }
+  .slot {
+    @apply flex items-center justify-center rounded-2xl border-4 border-slate-300 bg-white font-black text-slate-600 shadow-inner transition;
+    width: clamp(3.75rem, 18vw, 5.5rem);
+    height: clamp(3.75rem, 18vw, 5.5rem);
+    font-size: clamp(2rem, 7vw, 3rem);
+  }
+  .slot.has-value {
+    @apply border-sky-400 bg-sky-50 text-sky-700;
+  }
+  .slot.is-active {
+    box-shadow: 0 0 0 6px rgba(56, 189, 248, 0.35);
+  }
+  .slot--solution {
+    @apply border-emerald-400 bg-emerald-50 text-emerald-700;
+  }
+  .keypad {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(0.4rem, 1.6vw, 0.75rem);
+    width: 100%;
+    max-width: 20rem;
+    margin: 0 auto;
+  }
+  .key {
+    @apply flex items-center justify-center rounded-2xl border-4 border-slate-200 bg-white font-black text-slate-700 shadow-md transition active:scale-95;
+    height: clamp(3rem, 13vw, 4rem);
+    font-size: clamp(1.4rem, 5vw, 1.9rem);
+  }
+  .key--wide {
+    grid-column: span 2;
+  }
+  .key--back {
+    @apply border-amber-200 bg-amber-100 text-amber-700;
+  }
+  .key--ghost {
+    @apply border-transparent bg-transparent shadow-none;
+  }
+
+  /* count + compare */
+  .cac-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(0.5rem, 2vw, 1rem);
+  }
+  .cac-side {
+    @apply flex flex-col items-center gap-3;
+  }
+  .cac-figures {
+    @apply w-full rounded-2xl border-4 border-slate-200 bg-white p-2 shadow-inner;
+  }
+  .cac-symbol-row {
+    @apply flex justify-center;
+  }
+
+  /* addition from a picture (addPicture / domino) */
+  .add-rows {
+    display: grid;
+    gap: clamp(0.6rem, 2.4vw, 1.1rem);
+  }
+  .add-row {
+    @apply flex flex-col items-center gap-3 rounded-3xl border-4 border-slate-100 bg-white p-3 shadow-sm;
+  }
+  .add-picture {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(0.4rem, 1.6vw, 0.9rem);
+    width: 100%;
+  }
+  /* subtraction from a picture: one group, the taken away figures crossed */
+  .add-picture--take {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .eq-group {
+    @apply flex w-full items-center justify-center rounded-2xl border-4 border-slate-200 bg-white p-2 shadow-inner;
+  }
+  .add-equation {
+    @apply flex flex-wrap items-center justify-center;
+    gap: clamp(0.35rem, 1.4vw, 0.7rem);
+  }
+  .add-divider {
+    @apply self-stretch border-l-4 border-dashed border-slate-200;
+  }
+  .eq-num {
+    @apply font-black text-slate-700;
+    font-size: clamp(1.5rem, 6vw, 2.25rem);
+  }
+  .eq-sign {
+    @apply font-black text-slate-400;
+    font-size: clamp(1.5rem, 6vw, 2.25rem);
+  }
+  .input-cell--eq {
+    width: auto;
+  }
+  .domino {
+    display: block;
+    width: clamp(5rem, 42vw, 9rem);
+    height: auto;
+  }
+
+  /* tick the sums (multiCheck) */
+  .check-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(0.4rem, 2vw, 0.85rem);
+  }
+  .check-item {
+    @apply flex items-center gap-3 rounded-2xl border-4 border-slate-200 bg-white px-3 py-2.5 text-left font-black text-slate-700 shadow-md transition active:scale-95;
+    font-size: clamp(1.15rem, 4.5vw, 1.6rem);
+  }
+  .check-box {
+    @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border-4 border-slate-300 bg-white text-xl font-black text-white;
+  }
+  .check-item.is-picked {
+    @apply border-sky-400 bg-sky-50 text-sky-700;
+  }
+  .check-item.is-picked .check-box {
+    @apply border-sky-500 bg-sky-500;
+  }
+  .check-item.is-solution {
+    @apply border-emerald-400 bg-emerald-50 text-emerald-700;
+  }
+  .check-item.is-solution .check-box {
+    @apply border-emerald-500 bg-emerald-500;
+  }
+  .check-item.is-bad {
+    @apply border-rose-300 bg-rose-50 text-rose-700;
+  }
+  .check-item.is-bad .check-box {
+    @apply border-rose-400 bg-rose-400;
+  }
+
+  /* number bank (pickAddends / equalSums) */
+  .bank-rows {
+    display: grid;
+    gap: clamp(0.6rem, 2.4vw, 1.1rem);
+  }
+  .bank-row {
+    @apply flex flex-wrap items-center justify-center rounded-3xl border-4 border-slate-100 bg-white p-3 shadow-sm;
+    gap: clamp(0.5rem, 2vw, 1rem);
+  }
+  .bank-chips {
+    @apply flex flex-wrap items-center justify-center gap-2;
+  }
+  .bank-chip {
+    @apply relative flex shrink-0 items-center justify-center rounded-full border-4 border-slate-300 bg-white font-black text-slate-700 shadow-md transition active:scale-95;
+    width: clamp(2.75rem, 12vw, 3.5rem);
+    height: clamp(2.75rem, 12vw, 3.5rem);
+    font-size: clamp(1.25rem, 4.5vw, 1.75rem);
+  }
+  .bank-chip.is-used {
+    @apply border-sky-400 bg-sky-100 text-sky-700 opacity-50;
+  }
+  .bank-chip.is-crossed {
+    @apply border-rose-300 text-rose-400;
+  }
+  .bank-chip.is-crossed::after {
+    content: '';
+    position: absolute;
+    left: 6%;
+    right: 6%;
+    top: 50%;
+    height: 4px;
+    border-radius: 2px;
+    background: #f43f5e;
+    transform: rotate(-22deg);
+  }
+  .bank-eq {
+    @apply flex flex-wrap items-center justify-center;
+    gap: clamp(0.3rem, 1.2vw, 0.6rem);
+  }
+  .slot--sm {
+    width: clamp(2.75rem, 12vw, 3.5rem);
+    height: clamp(2.75rem, 12vw, 3.5rem);
+    font-size: clamp(1.25rem, 4.5vw, 1.75rem);
+  }
+  .target-box {
+    @apply flex shrink-0 items-center justify-center rounded-xl border-4 border-amber-300 bg-amber-50 font-black text-amber-700;
+    width: clamp(2.75rem, 12vw, 3.5rem);
+    height: clamp(2.75rem, 12vw, 3.5rem);
+    font-size: clamp(1.35rem, 5vw, 1.9rem);
+  }
+  .triangle-target {
+    @apply relative flex shrink-0 items-end justify-center;
+    width: clamp(3.5rem, 15vw, 4.75rem);
+    height: clamp(3.25rem, 14vw, 4.5rem);
+  }
+  .triangle-target .tri-shape {
+    @apply absolute inset-0;
+  }
+  .triangle-target .tri-num {
+    @apply relative font-black text-amber-900;
+    padding-bottom: 0.2rem;
+    font-size: clamp(1.05rem, 4vw, 1.4rem);
+  }
+
+  /* draw the missing circles (drawMissing) */
+  .draw-items {
+    display: grid;
+    gap: clamp(0.6rem, 2.4vw, 1.1rem);
+  }
+  .draw-item {
+    @apply flex flex-wrap items-center justify-center rounded-3xl border-4 border-slate-100 bg-white p-3 shadow-sm;
+    gap: clamp(0.5rem, 2vw, 1rem);
+  }
+  .draw-frame {
+    display: grid;
+    grid-template-columns: repeat(var(--cols, 5), minmax(0, 1fr));
+    gap: clamp(0.25rem, 1.2vw, 0.6rem);
+    width: 100%;
+    max-width: 20rem;
+    padding: clamp(0.25rem, 1vw, 0.5rem);
+    @apply rounded-2xl border-4 border-slate-200 bg-slate-50 shadow-inner;
+  }
+  .draw-cell {
+    @apply flex items-center justify-center rounded-xl border-4 border-dashed border-slate-200 bg-white transition;
+    aspect-ratio: 1 / 1;
+  }
+  .draw-cell.is-given {
+    @apply border-solid border-transparent;
+  }
+  .draw-cell.is-drawn {
+    @apply border-solid border-sky-300 bg-sky-50;
+  }
+  .draw-cell.is-solution {
+    @apply border-solid border-emerald-300 bg-emerald-50;
+  }
+  /* the child may cross out the circles instead of drawing them */
+  .draw-cell.is-crossed {
+    position: relative;
+    @apply border-solid border-rose-300 bg-rose-50;
+  }
+  .draw-cell.is-crossed::after {
+    content: '';
+    position: absolute;
+    left: 5%;
+    right: 5%;
+    top: 50%;
+    height: clamp(3px, 0.9vw, 6px);
+    border-radius: 3px;
+    background: #f43f5e;
+    transform: translateY(-50%) rotate(-24deg);
+  }
+  .draw-cell.is-crossed.is-solution {
+    @apply border-solid border-emerald-400 bg-emerald-50;
+  }
+  .draw-cell.is-crossed.is-solution::after {
+    background: #10b981;
+  }
+  .draw-cell .fig {
+    width: 78%;
+    height: 78%;
+  }
+  .draw-goal {
+    @apply flex flex-col items-center gap-1;
+  }
+  .draw-goal-label {
+    @apply text-sm font-bold text-slate-400;
+  }
+
+  /* drawing board */
+  .board {
+    @apply relative rounded-3xl border-4 border-slate-200 bg-slate-50 p-3 sm:p-4;
+  }
+  .board-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(0.4rem, 2vw, 0.85rem);
+  }
+  .card {
+    @apply relative flex min-h-24 flex-col items-center justify-center gap-2 rounded-2xl border-4 border-white bg-white p-3 shadow-md;
+  }
+  .card-figures {
+    width: 100%;
+  }
+  .card-label {
+    @apply rounded-xl bg-slate-100 px-3 py-0.5 text-2xl font-black text-slate-700;
+  }
+  .card-chip {
+    @apply text-sm font-bold text-slate-400;
+  }
+  .card-compare {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 0.25rem;
+    width: 100%;
+  }
+  .cmp-side {
+    width: 100%;
+  }
+  .card-symbol {
+    @apply px-1 text-2xl font-black text-sky-600;
+  }
+  .scribble {
+    @apply absolute inset-0 h-full w-full;
+    touch-action: none;
+    cursor: crosshair;
+    border-radius: 1.5rem;
+  }
+  .scribble.is-locked {
+    pointer-events: none;
+    cursor: default;
+  }
+  .ink {
+    fill: none;
+    stroke: #38bdf8;
+    stroke-width: 7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.85;
+    transition: opacity 0.22s ease;
+  }
+  .ink--fading {
+    opacity: 0;
+  }
+  .board-tip {
+    @apply mt-2 text-center text-lg font-bold text-slate-500;
+  }
+  .board-tip.is-ok {
+    @apply text-emerald-600;
+  }
+  .board-tip.is-hint {
+    @apply text-amber-600;
+  }
+
+  /* match board — the child draws a line between the two columns */
+  .board--match .match-cols {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1.25rem, 9vw, 4rem);
+    align-items: start;
+  }
+  .match-col {
+    @apply flex flex-col;
+    gap: clamp(0.5rem, 2vw, 0.9rem);
+  }
+  .match-item {
+    @apply flex min-h-20 flex-col items-center justify-center gap-1 rounded-2xl border-4 border-white bg-white p-2 shadow-md;
+  }
+  .match-sum {
+    @apply flex items-center justify-center font-black text-slate-700;
+    gap: 0.25rem;
+    font-size: clamp(1.25rem, 5vw, 1.75rem);
+  }
+  .match-picture {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    gap: 0.15rem;
+    width: 100%;
+  }
+  .match-plus {
+    @apply text-center font-black text-slate-400;
+    font-size: clamp(1.1rem, 4vw, 1.5rem);
+  }
+  /* On a phone the two columns leave ~100px per picture, so figures get two
+     per row instead of three - otherwise they would be too small to count. */
+  @media (max-width: 639px) {
+    .board--match .fig-grid {
+      --per-row: 2 !important;
+    }
+  }
+
+  /* ------------------------------------------------------------- feedback */
+  .feedback {
+    @apply flex items-center justify-center gap-3 rounded-3xl px-5 py-3 text-center text-2xl font-extrabold;
+    animation: pop 0.3s ease;
+  }
+  .feedback--ok {
+    @apply bg-emerald-100 text-emerald-700;
+  }
+  .feedback--bad {
+    @apply bg-amber-100 text-amber-700;
+  }
+
+  /* -------------------------------------------------------------- summary */
+  .stars {
+    @apply text-5xl tracking-widest;
+  }
+  .unsupported {
+    @apply rounded-3xl border-4 border-amber-200 bg-amber-50 p-4;
+  }
+}
+
+/* ------------------------------------------------------------- animations */
+/*
+ * NOTE: these rules live *outside* @layer components on purpose. Tailwind's
+ * JIT removes component rules whose class name never appears literally in the
+ * scanned sources, and the marker classes below are assembled from strings in
+ * scribble.js ("mark mark--" + kind). Keeping them here (or safelisting them in
+ * tailwind.config.js) guarantees they always ship.
+ */
+.mark--outline rect,
+.mark--cross line,
+.mark--link line {
+  animation: draw-in 0.5s ease-out forwards;
+}
+.mark--cross line:nth-child(2) {
+  animation-delay: 0.16s;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.85);
+  }
+  60% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-6px);
+  }
+  40% {
+    transform: translateX(6px);
+  }
+  60% {
+    transform: translateX(-4px);
+  }
+  80% {
+    transform: translateX(4px);
+  }
+}
+@keyframes draw-in {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes ok-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.65);
+  }
+  100% {
+    box-shadow: 0 0 0 18px rgba(16, 185, 129, 0);
+  }
+}
+@keyframes bad-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.55);
+  }
+  100% {
+    box-shadow: 0 0 0 18px rgba(244, 63, 94, 0);
+  }
+}
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+@keyframes say-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.09);
+  }
+}
+
+.flash-ok {
+  animation: ok-pulse 0.75s ease;
+}
+.flash-bad {
+  animation: bad-pulse 0.75s ease;
+}
+.pop {
+  animation: pop 0.28s ease;
+}
+.shake {
+  animation: shake 0.5s ease;
+}
+.floaty {
+  animation: floaty 3s ease-in-out infinite;
+}
+.confetti-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+}
+
+@media (min-width: 640px) {
+  .board-cards[data-count='3'] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .board-cards[data-count='4'] {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .check-list[data-count='3'] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .q-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  /* Side by side the two columns of a match board need shorter boxes. */
+  .board--match .match-cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .match-item {
+    min-height: 5.5rem;
+  }
+  /* Wide enough for the two picture groups next to each other. */
+  .match-picture {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 0.3rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .floaty {
+    animation: none;
+  }
+}
+
+/* ------------------------------------------------------------ print view --
+ * "Spausdinimo versija" (🖨️ Spausdinti on the play screen): the same play
+ * screen, printed as a black & white worksheet.
+ *
+ * Nothing is re-rendered for print. The play screen already holds one card per
+ * question with its figures drawn and its (empty) answer boxes in place, so it
+ * only has to be stripped down here: the screen-only chrome disappears and
+ * everything that stays is forced to black outlines on white. Keeping the rules
+ * outside @layer (like the animations above) guarantees Tailwind's JIT never
+ * prunes them.
+ */
+.print-only {
+  display: none;
+}
+
+@media print {
+  @page {
+    margin: 10mm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    background-image: none !important;
+    color: #000 !important;
+  }
+
+  /* Compact worksheet. Every widget size (answer boxes, figures, banks, text) is
+     written in rem or clamp(), so lowering the root font size shrinks the whole
+     sheet at once - this is the single knob to get more tasks onto one page.
+     Tailwind's utility spacing/padding follows along for the same reason. */
+  html {
+    font-size: 70%;
+  }
+
+  /* Only the worksheet prints: the app shell, the sticky bars, the buttons and
+     every on-screen-only control (number pad, > < = pickers, 🔊, drawing layer)
+     are dropped. NOTE: `header`/`footer` alone would also match the
+     `<header class="question-head">` of every question, so the shell is
+     targeted through .wrap. */
+  body > .wrap > header,
+  body > .wrap > footer,
+  .print-hide,
+  #check-bar,
+  .say-btn,
+  .keypad,
+  .symbol-picker,
+  .scribble,
+  .q-result,
+  .confetti-canvas,
+  .icon-btn,
+  .btn {
+    display: none !important;
+  }
+
+  .wrap,
+  main {
+    min-height: 0 !important;
+    max-width: none !important;
+    gap: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* The heading exists only on paper (a title + a line for the name). */
+  .print-only {
+    display: block !important;
+  }
+  .print-head {
+    margin-bottom: 3mm;
+    padding-bottom: 2mm;
+    border-bottom: 2px solid #000;
+    filter: grayscale(1);
+  }
+  .print-head__title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #000;
+  }
+  .print-head__line {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1mm;
+    font-weight: 700;
+    color: #000;
+  }
+
+  /* The host loses the padding that kept the last widgets above the sticky bar. */
+  #quiz-host {
+    gap: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  /* No box around a task: the tasks are separated by a dashed rule instead,
+     which is lighter and frees even more vertical space. */
+  .question-card {
+    background: #fff !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .question-card + .question-card {
+    margin-top: 3.5mm;
+    padding-top: 3.5mm !important;
+    border-top: 1px dashed #000 !important;
+  }
+  .question-head {
+    margin-bottom: 1mm !important;
+  }
+
+  /* Every box / frame keeps a visible black outline on white. */
+  .question-number,
+  .slot,
+  .symbol-slot,
+  .seg-btn,
+  .check-box,
+  .check-item,
+  .draw-cell,
+  .draw-frame,
+  .bank-chip,
+  .bank-row,
+  .target-box,
+  .panel,
+  .scene,
+  .eq-group,
+  .cac-figures,
+  .board,
+  .card,
+  .match-item,
+  .add-row,
+  .draw-item,
+  .grid-row {
+    background: #fff !important;
+    border-color: #000 !important;
+    box-shadow: none !important;
+  }
+
+  /* Text is always plain black. */
+  .question-instruction,
+  .question-hint,
+  .prompt,
+  .board-tip,
+  .card-label,
+  .card-chip,
+  .card-symbol,
+  .eq-num,
+  .eq-sign,
+  .match-sum,
+  .match-plus,
+  .check-item,
+  .bank-chip,
+  .slot,
+  .symbol-slot,
+  .seg-btn,
+  .target-box,
+  .tri-num,
+  .number-box,
+  .grid-num,
+  .count-chip,
+  .draw-goal-label,
+  .scene-marker,
+  .stars {
+    color: #000 !important;
+  }
+
+  /* Figures print in black & white. */
+  .fig,
+  .domino,
+  .match-picture,
+  .board {
+    filter: grayscale(1);
+  }
+
+  /* The answer boxes print EMPTY: the child writes the number / sign by hand, so
+     the "?" placeholder of an unanswered box is not printed (a box that already
+     holds an answer keeps showing it). */
+  .slot:not(.has-value) .slot-value {
+    visibility: hidden;
+  }
+  .symbol-slot:not(.is-filled) {
+    color: transparent !important;
+  }
+  /* The little count hint under a compare group ("?") is a screen-only helper. */
+  .count-chip {
+    display: none !important;
+  }
+
+  /* An answer box only has to hold a handwritten 1-2 digit number, so the
+     on-screen size (~88px, a thumb target) is far too big on paper. */
+  .slot {
+    width: 42px;
+    height: 42px;
+    border-width: 2px !important;
+    border-radius: 5px !important;
+    font-size: 20px !important;
+  }
+  /* the smaller boxes of the number banks (pickAddends / equalSums) */
+  .slot--sm {
+    width: 30px;
+    height: 30px;
+    font-size: 16px !important;
+  }
+  /* the box for the > < = sign (compare / compareExpressions) */
+  .symbol-slot {
+    width: 34px;
+    height: 34px;
+    border-width: 2px !important;
+    font-size: 18px !important;
+  }
+
+  /* Choice options (story choice, multiCheck): the small tick box next to the
+     option is what marks the answer, so the big frame drawn around every option
+     on screen is dropped on paper - the list prints as plain rows of
+     "[ ] option" and takes far less room. */
+  .check-list .check-item {
+    background: #fff !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    gap: 0.4rem;
+  }
+  .check-list .check-item .check-box {
+    width: 20px;
+    height: 20px;
+    border-width: 2px !important;
+    border-radius: 3px !important;
+  }
+
+  /* "Calculate and write the result" exercises (mixedOps, missingNumber,
+     compareExpressions) are lists of short rows - let them flow next to each
+     other instead of one per line, and drop the per-row frame. A row that carries
+     a picture is the only kind containing an .eq-group; those keep the full width
+     (the figures must stay countable). */
+  .add-rows:not(:has(.eq-group)) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5mm 6mm;
+  }
+  .add-rows:not(:has(.eq-group)) .add-row {
+    width: auto;
+    flex: 0 1 auto;
+    gap: 0;
+    padding: 0.5mm 1mm !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+  .add-rows:not(:has(.eq-group)) .add-equation {
+    gap: 0.25rem;
+  }
+  .add-rows:not(:has(.eq-group)) .eq-num,
+  .add-rows:not(:has(.eq-group)) .eq-sign {
+    font-size: 17px !important;
+  }
+
+  /* Hand-drawn crosses / lines stay visible (in black). */
+  .fig-cell.is-crossed::after,
+  .bank-chip.is-crossed::after,
+  .draw-cell.is-crossed::after {
+    background: #000 !important;
+  }
+  .ink {
+    stroke: #000;
+  }
+}

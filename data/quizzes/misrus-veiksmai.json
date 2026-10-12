@@ -1,0 +1,87 @@
+{
+  "id": "misrus-veiksmai",
+  "title": "Sudėtis ir atimtis",
+  "subtitle": "Mišrūs veiksmai iki 10 · sudėtis ir atimtis kartu",
+  "emoji": "🔀",
+  "color": "violet",
+  "grade": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "mixedOps",
+      "instruction": "Suskaičiuok ir įrašyk atsakymus.",
+      "hint": "Vienur sudėtis, kitur atimtis – žiūrėk į ženklą.",
+      "rows": [
+        { "id": "x1", "a": 5, "b": 3, "op": "+" },
+        { "id": "x2", "a": 9, "b": 4, "op": "-" },
+        { "id": "x3", "a": 2, "b": 6, "op": "+" }
+      ]
+    },
+    {
+      "id": "q2",
+      "type": "mixedOps",
+      "instruction": "Suskaičiuok ir įrašyk atsakymus.",
+      "rows": [
+        { "id": "x1", "a": 7, "b": 2, "op": "-" },
+        { "id": "x2", "a": 4, "b": 4, "op": "+" }
+      ]
+    },
+    {
+      "id": "q3",
+      "type": "mixedOps",
+      "instruction": "Suskaičiuok ir įrašyk atsakymus.",
+      "rows": [
+        { "id": "x1", "a": 6, "b": 3, "op": "+" },
+        { "id": "x2", "a": 10, "b": 7, "op": "-" },
+        { "id": "x3", "a": 3, "b": 3, "op": "+" }
+      ]
+    },
+    {
+      "id": "q4",
+      "type": "mixedOps",
+      "instruction": "Suskaičiuok ir įrašyk atsakymus.",
+      "rows": [
+        { "id": "x1", "a": 8, "b": 5, "op": "-" },
+        { "id": "x2", "a": 2, "b": 7, "op": "+" }
+      ]
+    },
+    {
+      "id": "q5",
+      "type": "mixedOps",
+      "instruction": "Suskaičiuok ir įrašyk atsakymus.",
+      "rows": [
+        { "id": "x1", "a": 1, "b": 4, "op": "+" },
+        { "id": "x2", "a": 9, "b": 8, "op": "-" },
+        { "id": "x3", "a": 5, "b": 5, "op": "+" }
+      ]
+    },
+    {
+      "id": "q6",
+      "type": "mixedOps",
+      "instruction": "Suskaičiuok ir įrašyk atsakymus.",
+      "rows": [
+        { "id": "x1", "a": 10, "b": 4, "op": "-" },
+        { "id": "x2", "a": 3, "b": 5, "op": "+" }
+      ]
+    },
+    {
+      "id": "q7",
+      "type": "mixedOps",
+      "instruction": "Suskaičiuok ir įrašyk atsakymus.",
+      "rows": [
+        { "id": "x1", "a": 6, "b": 2, "op": "+" },
+        { "id": "x2", "a": 7, "b": 6, "op": "-" }
+      ]
+    },
+    {
+      "id": "q8",
+      "type": "mixedOps",
+      "instruction": "Suskaičiuok ir įrašyk atsakymus.",
+      "rows": [
+        { "id": "x1", "a": 9, "b": 3, "op": "-" },
+        { "id": "x2", "a": 4, "b": 2, "op": "+" },
+        { "id": "x3", "a": 8, "b": 5, "op": "-" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "id": "sudetis-ir-palyginimas",
+  "title": "Sudėtis ir palyginimas",
+  "subtitle": "Skaičiai iki 20",
+  "emoji": "➕",
+  "color": "indigo",
+  "grade": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "write",
+      "instruction": "Įrašyk teisingą skaičių.",
+      "items": [
+        { "id": "w1", "prompt": "Kiek yra 6 + 3?", "answer": 9 },
+        { "id": "w2", "prompt": "Koks skaičius eina po 11?", "answer": 12 },
+        { "id": "w3", "prompt": "Koks skaičius eina prieš 15?", "answer": 14 }
+      ]
+    },
+    {
+      "id": "q2",
+      "type": "compare",
+      "instruction": "Palygink skaičius ir įrašyk reikiamą ženklą.",
+      "left": { "kind": "number", "value": 13, "color": "sky" },
+      "right": { "kind": "number", "value": 8, "color": "amber" }
+    },
+    {
+      "id": "q3",
+      "type": "compareGrid",
+      "instruction": "Palygink skaičius.",
+      "symbols": [">", "<", "="],
+      "rows": [
+        { "left": 12, "right": 12 },
+        { "left": 9, "right": 16 },
+        { "left": 20, "right": 7 },
+        { "left": 5, "right": 18 },
+        { "left": 14, "right": 11 },
+        { "left": 3, "right": 3 }
+      ]
+    },
+    {
+      "id": "q4",
+      "type": "countAndCompare",
+      "instruction": "Suskaičiuok, įrašyk skaičius ir palygink.",
+      "left": { "figures": { "shape": "🍇", "count": 6 } },
+      "right": { "figures": { "shape": "🍇", "count": 9 } }
+    },
+    {
+      "id": "q5",
+      "type": "compare",
+      "instruction": "Palygink figūras ir skaičių.",
+      "left": { "kind": "figures", "shape": "square", "count": 9, "color": "teal" },
+      "right": { "kind": "number", "value": 6, "color": "rose" }
+    },
+    {
+      "id": "q6",
+      "type": "outline",
+      "instruction": "Apibrauk kortelę, kurioje yra lygiai 8 figūros.",
+      "cards": [
+        { "id": "k1", "figures": { "shape": "candy", "count": 8, "color": "fuchsia" } },
+        { "id": "k2", "figures": { "shape": "candy", "count": 5, "color": "fuchsia" } },
+        { "id": "k3", "figures": { "shape": "candy", "count": 10, "color": "fuchsia" } }
+      ],
+      "answer": ["k1"]
+    }
+  ]
+}

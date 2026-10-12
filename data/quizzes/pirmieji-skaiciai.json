@@ -1,0 +1,57 @@
+{
+  "id": "pirmieji-skaiciai",
+  "title": "Pirmieji skaičiai",
+  "subtitle": "Skaičiuojam iki 5",
+  "emoji": "🐣",
+  "color": "emerald",
+  "grade": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "compare",
+      "instruction": "Kur yra daugiau obuoliukų?",
+      "hint": "Daugiau – >, mažiau – <, tiek pat – =",
+      "left": { "kind": "figures", "shape": "🍏", "count": 4 },
+      "right": { "kind": "figures", "shape": "🍏", "count": 2 }
+    },
+    {
+      "id": "q2",
+      "type": "count",
+      "instruction": "Suskaičiuok ir įrašyk skaičių.",
+      "scenes": [
+        { "id": "s1", "figures": { "shape": "🐞", "count": 3 } },
+        { "id": "s2", "figures": { "shape": "🎈", "count": 5 } }
+      ]
+    },
+    {
+      "id": "q3",
+      "type": "compare",
+      "instruction": "Palygink drugelius.",
+      "left": { "kind": "figures", "shape": "🦋", "count": 3 },
+      "right": { "kind": "figures", "shape": "🦋", "count": 3 }
+    },
+    {
+      "id": "q4",
+      "type": "outline",
+      "instruction": "Apibrauk kortelę, kurioje yra daugiau figūrų.",
+      "hint": "Brėžk ratuką apie kortelę",
+      "cards": [
+        { "id": "k1", "figures": { "shape": "⭐", "count": 2 } },
+        { "id": "k2", "figures": { "shape": "⭐", "count": 5 } }
+      ],
+      "answer": ["k2"]
+    },
+    {
+      "id": "q5",
+      "type": "crossOut",
+      "instruction": "Nubrauk kortelę, kurioje skaičius neteisingas.",
+      "hint": "Brauk per kortelę, kuri klysta",
+      "cards": [
+        { "id": "k1", "figures": { "shape": "🍓", "count": 3 }, "label": "3" },
+        { "id": "k2", "figures": { "shape": "🍓", "count": 2 }, "label": "4" },
+        { "id": "k3", "figures": { "shape": "🍓", "count": 1 }, "label": "1" }
+      ],
+      "answer": ["k2"]
+    }
+  ]
+}

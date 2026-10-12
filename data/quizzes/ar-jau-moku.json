@@ -1,0 +1,74 @@
+{
+  "id": "ar-jau-moku",
+  "title": "Ar jau moku?",
+  "subtitle": "Viskas kartu – skaičiavimas, braižymas, rašymas",
+  "emoji": "🏅",
+  "color": "rose",
+  "grade": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "count",
+      "instruction": "Suskaičiuok ir įrašyk skaičių.",
+      "scenes": [
+        { "id": "s1", "figures": { "shape": "bug", "count": 7, "color": "red" } },
+        { "id": "s2", "figures": { "shape": "apple", "count": 4, "color": "green" } },
+        { "id": "s3", "figures": { "shape": "fish", "count": 6, "color": "cyan" } }
+      ]
+    },
+    {
+      "id": "q2",
+      "type": "compare",
+      "instruction": "Palygink figūras ir skaičių.",
+      "left": { "kind": "figures", "shape": "star", "count": 5, "color": "amber" },
+      "right": { "kind": "number", "value": 3, "color": "sky" }
+    },
+    {
+      "id": "q3",
+      "type": "write",
+      "instruction": "Įrašyk teisingą skaičių.",
+      "items": [
+        { "id": "w1", "prompt": "Koks skaičius eina prieš 10?", "answer": 9 },
+        { "id": "w2", "prompt": "Kuris skaičius yra didesnis už 5, bet mažesnis už 7?", "answer": 6 },
+        { "id": "w3", "prompt": "Kiek yra 4 + 3?", "answer": 7 }
+      ]
+    },
+    {
+      "id": "q4",
+      "type": "outline",
+      "instruction": "Apibrauk kortelę, kurioje yra lygiai 5 figūros.",
+      "cards": [
+        { "id": "k1", "figures": { "shape": "circle", "count": 4, "color": "sky" } },
+        { "id": "k2", "figures": { "shape": "star", "count": 5, "color": "amber" } },
+        { "id": "k3", "figures": { "shape": "heart", "count": 7, "color": "rose" } }
+      ],
+      "answer": ["k2"]
+    },
+    {
+      "id": "q5",
+      "type": "crossOut",
+      "instruction": "Nubrauk korteles, kuriose skaičius neteisingas.",
+      "cards": [
+        { "id": "k1", "figures": { "shape": "apple", "count": 3, "color": "red" }, "label": "3" },
+        { "id": "k2", "figures": { "shape": "flower", "count": 5, "color": "fuchsia" }, "label": "6" },
+        { "id": "k3", "figures": { "shape": "pencil", "count": 4, "color": "indigo" }, "label": "4" },
+        { "id": "k4", "figures": { "shape": "candy", "count": 2, "color": "pink" }, "label": "1" }
+      ],
+      "answer": ["k2", "k4"]
+    },
+    {
+      "id": "q6",
+      "type": "compareGrid",
+      "instruction": "Palygink skaičius ir įrašyk ženklą.",
+      "symbols": [">", "<", "="],
+      "rows": [
+        { "left": 6, "right": 4 },
+        { "left": 5, "right": 5 },
+        { "left": 3, "right": 9 },
+        { "left": 8, "right": 1 },
+        { "left": 2, "right": 7 },
+        { "left": 10, "right": 10 }
+      ]
+    }
+  ]
+}

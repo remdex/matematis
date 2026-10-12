@@ -1,0 +1,87 @@
+{
+  "id": "nelygu-arba-lygu",
+  "title": "Lygu ar nelygu?",
+  "subtitle": "Įrašyk ženklą  =  arba  ≠",
+  "emoji": "❓",
+  "color": "violet",
+  "grade": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "compareGrid",
+      "instruction": "Palygink skaičius ir įrašyk ženklą.",
+      "hint": "Daugiau – >, mažiau – <, tiek pat – =",
+      "symbols": [">", "<", "="],
+      "rows": [
+        { "left": 3, "right": 8 },
+        { "left": 7, "right": 7 },
+        { "left": 9, "right": 2 },
+        { "left": 4, "right": 6 },
+        { "left": 5, "right": 1 },
+        { "left": 2, "right": 2 }
+      ]
+    },
+    {
+      "id": "q2",
+      "type": "compareGrid",
+      "instruction": "Ar skaičiai lygūs? Įrašyk = arba ≠.",
+      "symbols": ["=", "≠"],
+      "rows": [
+        { "left": 4, "right": 4 },
+        { "left": 2, "right": 5 },
+        { "left": 6, "right": 6 },
+        { "left": 8, "right": 3 },
+        { "left": 1, "right": 9 },
+        { "left": 7, "right": 7 }
+      ]
+    },
+    {
+      "id": "q3",
+      "type": "compare",
+      "instruction": "Suskaičiuok figūras. Ar jų tiek pat? Įrašyk = arba ≠.",
+      "left": { "kind": "figures", "shape": "circle", "count": 5, "color": "sky" },
+      "right": { "kind": "figures", "shape": "circle", "count": 5, "color": "sky" },
+      "symbols": ["=", "≠"]
+    },
+    {
+      "id": "q4",
+      "type": "compare",
+      "instruction": "Suskaičiuok figūras. Ar jų tiek pat? Įrašyk = arba ≠.",
+      "left": { "kind": "figures", "shape": "heart", "count": 4, "color": "rose" },
+      "right": { "kind": "figures", "shape": "heart", "count": 6, "color": "rose" },
+      "symbols": ["=", "≠"]
+    },
+    {
+      "id": "q5",
+      "type": "crossOut",
+      "instruction": "Nubrauk korteles, kuriose ženklas neteisingas.",
+      "cards": [
+        {
+          "id": "k1",
+          "compare": {
+            "left": { "kind": "figures", "shape": "apple", "count": 5, "color": "red" },
+            "right": { "kind": "figures", "shape": "apple", "count": 3, "color": "green" },
+            "symbol": ">"
+          }
+        },
+        {
+          "id": "k2",
+          "compare": {
+            "left": { "kind": "figures", "shape": "fish", "count": 4, "color": "cyan" },
+            "right": { "kind": "figures", "shape": "fish", "count": 4, "color": "cyan" },
+            "symbol": "≠"
+          }
+        },
+        {
+          "id": "k3",
+          "compare": {
+            "left": { "kind": "figures", "shape": "flower", "count": 2, "color": "fuchsia" },
+            "right": { "kind": "figures", "shape": "flower", "count": 7, "color": "fuchsia" },
+            "symbol": "<"
+          }
+        }
+      ],
+      "answer": ["k2"]
+    }
+  ]
+}

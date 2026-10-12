@@ -1,0 +1,90 @@
+{
+  "id": "apibrauk-ir-nubrauk",
+  "title": "Apibrauk ir nubrauk",
+  "subtitle": "Brauk su pelės ar piršto judesiu",
+  "emoji": "🖍️",
+  "color": "amber",
+  "grade": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "outline",
+      "instruction": "Apibrauk kortelę, kurioje figūrų yra daugiau.",
+      "hint": "Brėžk ratą apie kortelę",
+      "cards": [
+        { "id": "k1", "figures": { "shape": "triangle", "count": 4, "color": "amber" } },
+        { "id": "k2", "figures": { "shape": "triangle", "count": 6, "color": "amber" } },
+        { "id": "k3", "figures": { "shape": "triangle", "count": 3, "color": "amber" } }
+      ],
+      "answer": ["k2"]
+    },
+    {
+      "id": "q2",
+      "type": "outline",
+      "instruction": "Apibrauk kortelę, kurioje figūrų yra mažiau.",
+      "cards": [
+        { "id": "k1", "figures": { "shape": "circle", "count": 5, "color": "sky" } },
+        { "id": "k2", "figures": { "shape": "circle", "count": 2, "color": "sky" } },
+        { "id": "k3", "figures": { "shape": "circle", "count": 7, "color": "sky" } }
+      ],
+      "answer": ["k2"]
+    },
+    {
+      "id": "q3",
+      "type": "outline",
+      "instruction": "Apibrauk korteles, kuriose figūrų yra tiek pat.",
+      "cards": [
+        { "id": "k1", "figures": { "shape": "heart", "count": 4, "color": "rose" } },
+        { "id": "k2", "figures": { "shape": "star", "count": 4, "color": "amber" } },
+        { "id": "k3", "figures": { "shape": "square", "count": 6, "color": "emerald" } },
+        { "id": "k4", "figures": { "shape": "triangle", "count": 2, "color": "violet" } }
+      ],
+      "answer": ["k1", "k2"]
+    },
+    {
+      "id": "q4",
+      "type": "crossOut",
+      "instruction": "Nubrauk korteles, kuriose skaičius neteisingas.",
+      "hint": "Brauk per kortelę, kuri klysta",
+      "cards": [
+        { "id": "k1", "figures": { "shape": "triangle", "count": 4, "color": "emerald" }, "label": "4" },
+        { "id": "k2", "figures": { "shape": "circle", "count": 5, "color": "sky" }, "label": "3" },
+        { "id": "k3", "figures": { "shape": "square", "count": 2, "color": "violet" }, "label": "2" },
+        { "id": "k4", "figures": { "shape": "star", "count": 6, "color": "amber" }, "label": "8" }
+      ],
+      "answer": ["k2", "k4"]
+    },
+    {
+      "id": "q5",
+      "type": "crossOut",
+      "instruction": "Nubrauk kortelę, kurioje ženklas neteisingas.",
+      "cards": [
+        {
+          "id": "k1",
+          "compare": {
+            "left": { "kind": "figures", "shape": "circle", "count": 3, "color": "sky" },
+            "right": { "kind": "figures", "shape": "square", "count": 2, "color": "amber" },
+            "symbol": ">"
+          }
+        },
+        {
+          "id": "k2",
+          "compare": {
+            "left": { "kind": "figures", "shape": "heart", "count": 2, "color": "rose" },
+            "right": { "kind": "figures", "shape": "star", "count": 5, "color": "amber" },
+            "symbol": ">"
+          }
+        },
+        {
+          "id": "k3",
+          "compare": {
+            "left": { "kind": "figures", "shape": "diamond", "count": 4, "color": "violet" },
+            "right": { "kind": "figures", "shape": "diamond", "count": 4, "color": "violet" },
+            "symbol": "="
+          }
+        }
+      ],
+      "answer": ["k2"]
+    }
+  ]
+}

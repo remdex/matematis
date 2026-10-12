@@ -1,0 +1,192 @@
+{
+  "id": "palygink-veiksmus",
+  "title": "Palygink veiksmus",
+  "subtitle": "Sudėtis ir atimtis · įrašyk > < =",
+  "emoji": "🧮",
+  "color": "teal",
+  "grade": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "compareExpressions",
+      "instruction": "Suskaičiuok abi puses ir įrašyk reikiamą ženklą.",
+      "hint": "Pirma suskaičiuok kairę pusę, tada dešinę.",
+      "symbols": [">", "<", "="],
+      "rows": [
+        {
+          "id": "e1",
+          "left": { "a": 2, "b": 3, "op": "+" },
+          "right": { "a": 9, "b": 4, "op": "-" }
+        },
+        {
+          "id": "e2",
+          "left": { "a": 5, "b": 4, "op": "+" },
+          "right": { "a": 3, "b": 2, "op": "+" }
+        },
+        {
+          "id": "e3",
+          "left": { "a": 10, "b": 6, "op": "-" },
+          "right": { "a": 2, "b": 1, "op": "+" }
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "type": "compareExpressions",
+      "instruction": "Suskaičiuok abi puses ir įrašyk reikiamą ženklą.",
+      "hint": "Abi pusės vienodos? Tada rašyk =",
+      "symbols": [">", "<", "="],
+      "rows": [
+        {
+          "id": "e1",
+          "left": { "a": 4, "b": 4, "op": "+" },
+          "right": { "a": 10, "b": 2, "op": "-" }
+        },
+        {
+          "id": "e2",
+          "left": { "a": 7, "b": 3, "op": "-" },
+          "right": { "a": 6, "b": 1, "op": "-" }
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "type": "compareExpressions",
+      "instruction": "Suskaičiuok abi puses ir įrašyk reikiamą ženklą.",
+      "hint": "Pirma suskaičiuok kairę pusę, tada dešinę.",
+      "symbols": [">", "<", "="],
+      "rows": [
+        {
+          "id": "e1",
+          "left": { "a": 9, "b": 5, "op": "-" },
+          "right": { "a": 1, "b": 2, "op": "+" }
+        },
+        {
+          "id": "e2",
+          "left": { "a": 3, "b": 3, "op": "+" },
+          "right": { "a": 5, "b": 1, "op": "+" }
+        },
+        {
+          "id": "e3",
+          "left": { "a": 8, "b": 2, "op": "-" },
+          "right": { "a": 4, "b": 5, "op": "+" }
+        }
+      ]
+    },
+    {
+      "id": "q4",
+      "type": "compareExpressions",
+      "instruction": "Suskaičiuok abi puses ir įrašyk reikiamą ženklą.",
+      "hint": "Kuri pusė didesnė? Rašyk > arba <",
+      "symbols": [">", "<", "="],
+      "rows": [
+        {
+          "id": "e1",
+          "left": { "a": 1, "b": 6, "op": "+" },
+          "right": { "a": 9, "b": 1, "op": "-" }
+        },
+        {
+          "id": "e2",
+          "left": { "a": 10, "b": 7, "op": "-" },
+          "right": { "a": 2, "b": 1, "op": "+" }
+        }
+      ]
+    },
+    {
+      "id": "q5",
+      "type": "compareExpressions",
+      "instruction": "Suskaičiuok abi puses ir įrašyk reikiamą ženklą.",
+      "hint": "Abi pusės vienodos? Tada rašyk =",
+      "symbols": [">", "<", "="],
+      "rows": [
+        {
+          "id": "e1",
+          "left": { "a": 2, "b": 2, "op": "+" },
+          "right": { "a": 7, "b": 1, "op": "-" }
+        },
+        {
+          "id": "e2",
+          "left": { "a": 6, "b": 2, "op": "-" },
+          "right": { "a": 3, "b": 1, "op": "+" }
+        },
+        {
+          "id": "e3",
+          "left": { "a": 5, "b": 5, "op": "+" },
+          "right": { "a": 9, "b": 3, "op": "-" }
+        }
+      ]
+    },
+    {
+      "id": "q6",
+      "type": "compareExpressions",
+      "instruction": "Suskaičiuok abi puses ir įrašyk reikiamą ženklą.",
+      "hint": "Pirma suskaičiuok kairę pusę, tada dešinę.",
+      "symbols": [">", "<", "="],
+      "rows": [
+        {
+          "id": "e1",
+          "left": { "a": 7, "b": 2, "op": "+" },
+          "right": { "a": 10, "b": 2, "op": "-" }
+        },
+        {
+          "id": "e2",
+          "left": { "a": 3, "b": 1, "op": "+" },
+          "right": { "a": 2, "b": 5, "op": "+" }
+        },
+        {
+          "id": "e3",
+          "left": { "a": 9, "b": 3, "op": "-" },
+          "right": { "a": 4, "b": 1, "op": "+" }
+        }
+      ]
+    },
+    {
+      "id": "q7",
+      "type": "compareExpressions",
+      "instruction": "Suskaičiuok abi puses ir įrašyk reikiamą ženklą.",
+      "hint": "Abi pusės vienodos? Tada rašyk =",
+      "symbols": [">", "<", "="],
+      "rows": [
+        {
+          "id": "e1",
+          "left": { "a": 5, "b": 2, "op": "-" },
+          "right": { "a": 1, "b": 1, "op": "+" }
+        },
+        {
+          "id": "e2",
+          "left": { "a": 6, "b": 3, "op": "+" },
+          "right": { "a": 10, "b": 1, "op": "-" }
+        },
+        {
+          "id": "e3",
+          "left": { "a": 8, "b": 4, "op": "-" },
+          "right": { "a": 2, "b": 3, "op": "+" }
+        }
+      ]
+    },
+    {
+      "id": "q8",
+      "type": "compareExpressions",
+      "instruction": "Suskaičiuok abi puses ir įrašyk reikiamą ženklą.",
+      "hint": "Kuri pusė didesnė? Rašyk > arba <",
+      "symbols": [">", "<", "="],
+      "rows": [
+        {
+          "id": "e1",
+          "left": { "a": 2, "b": 6, "op": "+" },
+          "right": { "a": 9, "b": 2, "op": "-" }
+        },
+        {
+          "id": "e2",
+          "left": { "a": 4, "b": 1, "op": "+" },
+          "right": { "a": 3, "b": 4, "op": "+" }
+        },
+        {
+          "id": "e3",
+          "left": { "a": 10, "b": 4, "op": "-" },
+          "right": { "a": 2, "b": 2, "op": "+" }
+        }
+      ]
+    }
+  ]
+}

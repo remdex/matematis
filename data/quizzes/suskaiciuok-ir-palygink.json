@@ -1,0 +1,50 @@
+{
+  "id": "suskaiciuok-ir-palygink",
+  "title": "Suskaičiuok ir palygink",
+  "subtitle": "Įrašyk skaičius ir ženklą",
+  "emoji": "🔢",
+  "color": "emerald",
+  "grade": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "count",
+      "instruction": "Parašyk, kiek yra daiktų.",
+      "scenes": [
+        { "id": "s1", "figures": { "shape": "eraser", "count": 6, "color": "rose" } },
+        { "id": "s2", "figures": { "shape": "soap", "count": 6, "color": "sky" } },
+        { "id": "s3", "figures": { "shape": "pen", "count": 8, "color": "indigo" } },
+        { "id": "s4", "figures": { "shape": "crayon", "count": 3, "color": "amber" } }
+      ]
+    },
+    {
+      "id": "q2",
+      "type": "countAndCompare",
+      "instruction": "Suskaičiuok, įrašyk skaičius ir palygink.",
+      "left": { "figures": { "shape": "soap", "count": 6, "color": "sky" } },
+      "right": { "figures": { "shape": "sponge", "count": 6, "color": "amber" } },
+      "symbols": [">", "<", "="]
+    },
+    {
+      "id": "q3",
+      "type": "countAndCompare",
+      "instruction": "Suskaičiuok, įrašyk skaičius ir palygink.",
+      "left": { "figures": { "shape": "pen", "count": 8, "color": "indigo" } },
+      "right": { "figures": { "shape": "eraser", "count": 4, "color": "rose" } }
+    },
+    {
+      "id": "q4",
+      "type": "countAndCompare",
+      "instruction": "Suskaičiuok, įrašyk skaičius ir palygink.",
+      "left": { "figures": { "shape": "crayon", "count": 3, "color": "lime" } },
+      "right": { "figures": { "shape": "candy", "count": 8, "color": "fuchsia" } }
+    },
+    {
+      "id": "q5",
+      "type": "countAndCompare",
+      "instruction": "Suskaičiuok, įrašyk skaičius ir palygink.",
+      "left": { "figures": { "shape": "apple", "count": 6, "color": "red" } },
+      "right": { "figures": { "shape": "carrot", "count": 9, "color": "orange" } }
+    }
+  ]
+}

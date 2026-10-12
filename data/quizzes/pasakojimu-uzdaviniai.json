@@ -1,0 +1,97 @@
+{
+  "id": "pasakojimu-uzdaviniai",
+  "title": "Pasakojimų uždaviniai",
+  "subtitle": "Perskaityk ir atsakyk į klausimą",
+  "emoji": "📖",
+  "color": "teal",
+  "grade": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "story",
+      "instruction": "Rūta į krepšelį įsidėjo 7 braškes, o Benas – 10 braškių. Kas surinko daugiau braškių?",
+      "options": ["Rūta", "Benas"],
+      "answer": "Benas"
+    },
+    {
+      "id": "q2",
+      "type": "story",
+      "instruction": "Lentynoje stovi 8 knygos ir 5 žurnalai. Ko lentynoje yra mažiau – knygų ar žurnalų?",
+      "options": ["Knygų", "Žurnalų"],
+      "answer": "Žurnalų"
+    },
+    {
+      "id": "q3",
+      "type": "story",
+      "instruction": "Pirmoji voverė rado 6 riešutus. Antroji voverė taip pat rado 6 riešutus. Ar voverės rado po lygiai riešutų, ar kuri nors rado daugiau?",
+      "options": ["Po lygiai", "Pirmoji rado daugiau", "Antroji rado daugiau"],
+      "answer": "Po lygiai"
+    },
+    {
+      "id": "q4",
+      "type": "story",
+      "instruction": "Morta turėjo 12 saldainių ir 4 suvalgė. Tadas turi 10 saldainių. Kas dabar turi mažiau saldainių – Morta ar Tadas?",
+      "options": ["Morta", "Tadas"],
+      "answer": "Morta"
+    },
+    {
+      "id": "q5",
+      "type": "story",
+      "instruction": "Darželyje pražydo 13 geltonų gėlių ir 9 raudonos gėlės. Kurių gėlių pražydo mažiau?",
+      "options": ["Geltonų", "Raudonų"],
+      "answer": "Raudonų"
+    },
+    {
+      "id": "q6",
+      "type": "story",
+      "instruction": "Jonas turėjo 5 lipdukus ir gavo dar 3. Tomas turi 9 lipdukus. Kas dabar turi daugiau lipdukų?",
+      "options": ["Jonas", "Tomas"],
+      "answer": "Tomas"
+    },
+    {
+      "id": "q7",
+      "type": "story",
+      "instruction": "Mama iškepė 14 sausainių ir atidavė 7 Džiugui bei 7 Kamilei. Ar vaikai gavo po lygiai sausainių?",
+      "options": ["Po lygiai", "Ne po lygiai"],
+      "answer": "Po lygiai"
+    },
+    {
+      "id": "q8",
+      "type": "story",
+      "instruction": "Kieme bėgioja 11 kačiukų ir 4 šuniukai. Kurių gyvūnėlių kieme yra daugiau?",
+      "options": ["Kačiukų", "Šuniukų"],
+      "answer": "Kačiukų"
+    },
+    {
+      "id": "q9",
+      "type": "story",
+      "instruction": "Lėja surinko 6 kankorėžius ryte ir 4 popiet. Rokas surinko 10 kankorėžių. Ar Lėja ir Rokas surinko po lygiai kankorėžių?",
+      "options": ["Po lygiai", "Ne po lygiai"],
+      "answer": "Po lygiai"
+    },
+    {
+      "id": "q10",
+      "type": "story",
+      "instruction": "Katė turi 9 žaisliukus, o šuniukas – 7. Kiek žaisliukų trūksta šuniukui, kad abu turėtų po lygiai?",
+      "answer": 2
+    },
+    {
+      "id": "q11",
+      "type": "story",
+      "instruction": "Benas neturėjo obuolių, bet Marytė davė 2 obuolius. Kiek obuolių dabar turi Benas?",
+      "answer": 2
+    },
+    {
+      "id": "q12",
+      "type": "story",
+      "instruction": "Benas neturėjo obuolių, Marytė turėjo 5 obuolius ir 2 atidavė Benui. Kiek obuolių dabar turi Benas?",
+      "answer": 2
+    },
+    {
+      "id": "q13",
+      "type": "story",
+      "instruction": "Benas neturėjo obuolių, Marytė turėjo 5 obuolius ir 2 atidavė Benui. Kiek obuolių liko Marytei?",
+      "answer": 3
+    }
+  ]
+}

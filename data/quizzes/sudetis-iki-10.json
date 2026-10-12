@@ -1,0 +1,398 @@
+{
+  "id": "sudetis-iki-10",
+  "title": "Sudėtis",
+  "subtitle": "Sudėtis iki 10 · paveikslai, domino, skaičių bankas",
+  "emoji": "➕",
+  "color": "indigo",
+  "grade": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "addPicture",
+      "instruction": "Suskaičiuok abi grupes ir parašyk atsakymą.",
+      "hint": "Įrašyk tris skaičius: kiek kairėje, kiek dešinėje ir kiek iš viso.",
+      "rows": [
+        {
+          "id": "r1",
+          "left": {
+            "shape": "triangle",
+            "count": 4,
+            "color": "amber"
+          },
+          "right": {
+            "shape": "square",
+            "count": 1,
+            "color": "sky"
+          }
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "type": "addPicture",
+      "instruction": "Suskaičiuok abi grupes ir parašyk atsakymą.",
+      "hint": "Įrašyk tris skaičius: kiek kairėje, kiek dešinėje ir kiek iš viso.",
+      "rows": [
+        {
+          "id": "r1",
+          "left": {
+            "shape": "circle",
+            "count": 3,
+            "color": "rose"
+          },
+          "right": {
+            "shape": "circle",
+            "count": 2,
+            "color": "rose"
+          }
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "type": "addPicture",
+      "instruction": "Suskaičiuok abi grupes ir parašyk atsakymą.",
+      "hint": "Įrašyk tris skaičius: kiek kairėje, kiek dešinėje ir kiek iš viso.",
+      "rows": [
+        {
+          "id": "r1",
+          "left": {
+            "shape": "star",
+            "count": 2,
+            "color": "violet"
+          },
+          "right": {
+            "shape": "heart",
+            "count": 3,
+            "color": "pink"
+          }
+        }
+      ]
+    },
+    {
+      "id": "q4",
+      "type": "drawMissing",
+      "instruction": "Langelėje parašyta, kiek apskritimų turi būti. Kiek apskritimų dar trūksta? Nupiešk juos.",
+      "hint": "Suskaičiuok, kiek trūksta, ir nupiešk tik tiek – ne visus langelius.",
+      "items": [
+        {
+          "id": "m1",
+          "target": 3,
+          "have": 1,
+          "cells": 6,
+          "shape": "circle",
+          "color": "sky"
+        },
+        {
+          "id": "m2",
+          "target": 2,
+          "have": 0,
+          "cells": 5,
+          "shape": "circle",
+          "color": "emerald"
+        },
+        {
+          "id": "m3",
+          "target": 5,
+          "have": 2,
+          "cells": 8,
+          "shape": "circle",
+          "color": "violet"
+        },
+        {
+          "id": "m4",
+          "target": 4,
+          "have": 3,
+          "cells": 7,
+          "shape": "circle",
+          "color": "amber"
+        }
+      ]
+    },
+    {
+      "id": "q5",
+      "type": "pickAddends",
+      "instruction": "Atlik sudėties veiksmus. Nereikalingą skaičių nubrauk.",
+      "hint": "Bakstelk du skaičius – jie atsistos į langelius.",
+      "items": [
+        {
+          "id": "b1",
+          "target": 3,
+          "bank": [
+            1,
+            3,
+            2
+          ]
+        },
+        {
+          "id": "b2",
+          "target": 4,
+          "bank": [
+            2,
+            1,
+            2
+          ]
+        },
+        {
+          "id": "b3",
+          "target": 5,
+          "bank": [
+            4,
+            3,
+            1
+          ]
+        },
+        {
+          "id": "b4",
+          "target": 2,
+          "bank": [
+            1,
+            3,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q6",
+      "type": "equalSums",
+      "instruction": "Taip įrašyk skaičius, kad abiejų veiksmų gautum trikampyje parašytą skaičių.",
+      "hint": "Abiejose lygybės pusėse turi būti tiek pat.",
+      "items": [
+        {
+          "id": "e1",
+          "target": 4,
+          "bank": [
+            3,
+            2,
+            1,
+            2
+          ]
+        },
+        {
+          "id": "e2",
+          "target": 5,
+          "bank": [
+            4,
+            2,
+            1,
+            3
+          ]
+        },
+        {
+          "id": "e3",
+          "target": 3,
+          "bank": [
+            1,
+            1,
+            2,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q7",
+      "type": "domino",
+      "instruction": "Suskaičiuok taškus abiejose pusėse ir įrašyk sumą.",
+      "hint": "Pirmiausia suskaičiuok kairę pusę, paskui dešinę.",
+      "write": "result",
+      "rows": [
+        {
+          "id": "d1",
+          "left": 3,
+          "right": 2
+        }
+      ]
+    },
+    {
+      "id": "q8",
+      "type": "domino",
+      "instruction": "Suskaičiuok taškus abiejose pusėse ir įrašyk sumą.",
+      "hint": "Pirmiausia suskaičiuok kairę pusę, paskui dešinę.",
+      "write": "result",
+      "rows": [
+        {
+          "id": "d1",
+          "left": 1,
+          "right": 5
+        }
+      ]
+    },
+    {
+      "id": "q9",
+      "type": "domino",
+      "instruction": "Suskaičiuok taškus abiejose pusėse ir parašyk atsakymą.",
+      "rows": [
+        {
+          "id": "d1",
+          "left": 4,
+          "right": 4
+        }
+      ],
+      "hint": "Pirmiausia suskaičiuok kairę pusę, paskui dešinę."
+    },
+    {
+      "id": "q10",
+      "type": "domino",
+      "instruction": "Suskaičiuok taškus abiejose pusėse ir parašyk atsakymą.",
+      "rows": [
+        {
+          "id": "d1",
+          "left": 4,
+          "right": 6
+        }
+      ],
+      "hint": "Pirmiausia suskaičiuok kairę pusę, paskui dešinę."
+    },
+    {
+      "id": "q11",
+      "type": "match",
+      "instruction": "Sujunk sudėties veiksmą su jį vaizduojančiu paveikslėliu. Atlik šiuos veiksmus.",
+      "hint": "Brėžk liniją nuo veiksmo iki paveikslėlio, o tada įrašyk sumą.",
+      "result": true,
+      "left": [
+        {
+          "id": "l1",
+          "a": 2,
+          "b": 3
+        },
+        {
+          "id": "l2",
+          "a": 4,
+          "b": 1
+        },
+        {
+          "id": "l3",
+          "a": 3,
+          "b": 1
+        },
+        {
+          "id": "l4",
+          "a": 2,
+          "b": 2
+        }
+      ],
+      "right": [
+        {
+          "id": "r1",
+          "left": {
+            "shape": "✏️",
+            "count": 4
+          },
+          "right": {
+            "shape": "🖍️",
+            "count": 1
+          }
+        },
+        {
+          "id": "r2",
+          "left": {
+            "shape": "🍎",
+            "count": 2
+          },
+          "right": {
+            "shape": "🍎",
+            "count": 2
+          }
+        },
+        {
+          "id": "r3",
+          "left": {
+            "shape": "⭐",
+            "count": 3
+          },
+          "right": {
+            "shape": "🔵",
+            "count": 1
+          }
+        },
+        {
+          "id": "r4",
+          "left": {
+            "shape": "🐟",
+            "count": 2
+          },
+          "right": {
+            "shape": "🐟",
+            "count": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "q12",
+      "type": "multiCheck",
+      "instruction": "Pažymėk sudėties veiksmus, kuriais gautum skaičių 8.",
+      "hint": "Pažymėk visus veiksmus, kurių suma yra 8.",
+      "target": 8,
+      "items": [
+        {
+          "id": "c1",
+          "a": 4,
+          "b": 4
+        },
+        {
+          "id": "c2",
+          "a": 3,
+          "b": 3
+        },
+        {
+          "id": "c3",
+          "a": 2,
+          "b": 6
+        },
+        {
+          "id": "c4",
+          "a": 5,
+          "b": 3
+        },
+        {
+          "id": "c5",
+          "a": 1,
+          "b": 5
+        },
+        {
+          "id": "c6",
+          "a": 2,
+          "b": 5
+        },
+        {
+          "id": "c7",
+          "a": 3,
+          "b": 5
+        },
+        {
+          "id": "c8",
+          "a": 4,
+          "b": 3
+        },
+        {
+          "id": "c9",
+          "a": 7,
+          "b": 1
+        }
+      ]
+    },
+    {
+      "id": "q13",
+      "type": "missingNumber",
+      "instruction": "Įrašyk trūkstamą skaičių.",
+      "hint": "Langelis gali būti ir priekyje, ir viduryje.",
+      "rows": [
+        {
+          "id": "m1",
+          "a": 5,
+          "b": 3,
+          "blank": "left"
+        },
+        {
+          "id": "m2",
+          "a": 4,
+          "b": 6,
+          "blank": "middle"
+        }
+      ]
+    }
+  ]
+}
