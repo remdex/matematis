@@ -565,7 +565,7 @@ Colours simply do not apply to emoji.
 | `GET /api/list` | `{ "quizzes": [ { id, title, subtitle, emoji, color, count } ] }` |
 | `GET /api/quiz/<id>` | the quiz JSON (404 when unknown) |
 | `GET /api/random?exclude=<id>` | a random existing quiz (🎲 button) |
-| `GET /api/generate?types=a,b,c&max=5|10|20&count=1…20&tasks=1…50` | `{ "quizzes": [ … ] }` — freshly generated quizzes made of exactly those question types (`types` empty/unknown = every type). Two independent read-aloud switches: `&say=1` voices every **non-story** question, `&sayStory=1` voices the **story** problems; both off by default (omitting one leaves that group at its own default) |
+| `GET /api/generate?types=a,b,c&max=5|10|20&count=1…20&tasks=1…50` | `{ "quizzes": [ … ] }` — freshly generated quizzes made of exactly those question types (`types` empty/unknown = every type), with the tasks ordered from the easiest exercise to the hardest. Two independent read-aloud switches: `&say=1` voices every **non-story** question, `&sayStory=1` voices the **story** problems; both off by default (omitting one leaves that group at its own default) |
 | `GET /api/generate?focus=compare|count|draw|sum|sub|mixed&…` | the older preset form; each focus is a shorthand for a list of types (see §7) |
 | `POST /api/validate` | validates author JSON → `{ ok, errors[], warnings[], quiz }` (builder screen) |
 | `GET /api/tts?status=1` | `{ enabled, voice_id, model_id, cached_sentences, max_chars, … }` — no secrets; the page hides the 🔊 buttons when `enabled` is false |
@@ -775,6 +775,35 @@ ticks its whole family, and nothing ticked means every type):
 `match` is the only type the generator cannot build: arranging the pictures so that
 every sum fits exactly one of them needs hand work.
 
+Every exercise carries a **complexity score from 1 to 10**, shown as a small badge on
+its chip in the picker (and in the preview panel). The scale is relative: 10 is the
+hardest exercise the generator can build — `equalSums` / `equalDifferences`, "arrange
+four numbers into two equations that give the same amount" — because it needs trial and
+error plus two checks with nothing to count:
+
+| Score | Exercises |
+| --- | --- |
+| 1 | `count` |
+| 2 | `write`, `domino` |
+| 3 | `compare`, `countAndCompare`, `addPicture`, `outline`, `subtractDomino` |
+| 4 | `compareGrid`, `crossOut`, `drawMissing`, `subtractPicture` |
+| 5 | `mixedOps`, `crossOutExtra` |
+| 6 | `missingNumber`, `missingNumberSub` |
+| 7 | `pickAddends`, `multiCheck`, `subtractPair`, `subtractCheck` |
+| 8 | `compareExpressions`, `storyChoice` |
+| 9 | `story` |
+| 10 | `equalSums`, `equalDifferences` |
+
+`GEN_TYPE_COMPLEXITY` is the single source of truth, exposed to the page as
+`window.__GEN_TYPE_COMPLEXITY__` (the chips read it with `genScore()` in `app.js`).
+A generated quiz is **sorted by that score, easiest first** — the child warms up with
+counting and only meets a story or an equal-sums puzzle at the end. The sort runs on
+the finished question list and PHP's `usort()` is stable, so equally hard tasks keep the
+balanced, random order the plan built; because it happens after the whole list is built,
+a refill plan (`tasks` > plan length) is merged into the same ramp instead of starting a
+second one. The question ids are renumbered afterwards (`q1, q2, …`), so they still
+follow the order on screen.
+
 * amounts stay between 1 and `max` (`iki 5`, `iki 10`, `iki 20`); a figure group shows
   at most 10 figures, bigger amounts are written as plain numbers
 * both sides show the **same figure in about half** of the generated comparisons
@@ -813,9 +842,11 @@ response.
   (never on the result — the missing number must not be just the answer) and the equation
   uses numbers a child can handle — an addend of a picture stays inside a countable group
   (at most 10), a difference is at least 1
-* `mixedOps`: one exercise mixes both operations — every row has its own `+`/`−` and the
-  first two rows always use different signs. The equation stays inside `max` (a sum never
-  exceeds it, a difference is never 0), and only the result is asked for
+* `mixedOps`: one exercise mixes both operations — **six rows (three `+` and three `−`),
+  shown as a 3 x 2 grid** (`.add-rows--two`, 2 columns from the `sm` width, one column on
+  a phone - the same shape the comparison table uses). Every row has its own `+`/`−` and
+  the first two rows always use different signs. The equation stays inside `max` (a sum
+  never exceeds it, a difference is never 0), and only the result is asked for
 * `story`: a little story with numbers in it ("Jonukas turėjo 5 obuolius...") built from
   a random name and a random object, and the child writes the answer. **Both operations**
   are generated — the subtraction templates ("...atidavė 3..., kiek liko?") and the
@@ -853,7 +884,8 @@ operations), `draw` (🖍️ Braižyk),
 subtraction exercises) and `mixed` (🌈 Viskas kartu — every
 type). A focus is a *plan* of builders (5 to 8 entries): without the `tasks` parameter
 the quiz gets exactly that many questions, otherwise the plan is cycled to reach the
-requested amount.
+requested amount. The tasks of every quiz come out **ordered from the easiest exercise to
+the hardest** (see the complexity table above).
 
 A type selection is **balanced**: the ticked types take turns and each cycles through
 its own builders, so every type ends up with (almost) the same number of questions — a

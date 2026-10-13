@@ -416,6 +416,9 @@ function createEquationRows({ rows, write, op = '+', onChanged }) {
   const sign = opSign(op);
   const node = h('div', { class: 'q-block q-add-rows' });
   const list = h('div', { class: 'add-rows' });
+  // More than three short rows (mixedOps has six) take the 3 x 2 shape of the
+  // comparison table instead of six stacked cards (2 columns from the sm width).
+  if (rows.length > 3) list.classList.add('add-rows--two');
 
   const slots = [];
   rows.forEach((row) => {

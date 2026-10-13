@@ -136,10 +136,17 @@
     @apply bg-sky-500 text-white;
   }
   .type-chip {
-    @apply rounded-full border-4 border-slate-200 bg-white px-3 py-1.5 text-base font-bold text-slate-600 shadow-sm transition active:scale-95;
+    @apply inline-flex items-center rounded-full border-4 border-slate-200 bg-white px-3 py-1.5 text-base font-bold text-slate-600 shadow-sm transition active:scale-95;
   }
   .type-chip.is-on {
     @apply border-sky-400 bg-sky-100 text-sky-700;
+  }
+  /* the little difficulty badge at the end of every exercise chip (1-10) */
+  .type-chip__score {
+    @apply ml-1.5 inline-flex h-6 min-w-6 shrink-0 items-center justify-center rounded-full bg-slate-100 px-1.5 text-sm font-extrabold text-slate-500;
+  }
+  .type-chip.is-on .type-chip__score {
+    @apply bg-sky-500 text-white;
   }  /* generator: the "įgarsinti" opt-in next to the story types */
   .type-voice {
     @apply inline-flex cursor-pointer items-center gap-2 self-center rounded-full border-4 border-dashed border-slate-200 bg-white px-3 py-1.5 text-base font-bold text-slate-500 transition;
@@ -158,6 +165,10 @@
   }
   .type-preview__label {
     @apply min-w-0 text-base font-extrabold text-slate-700;
+  }
+  /* the difficulty of the exercise shown in the preview panel */
+  .type-preview__score {
+    @apply ml-auto shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-xs font-extrabold uppercase tracking-wide text-slate-500;
   }
   .type-preview__body {
     @apply min-h-[12rem] max-h-[70vh] overflow-hidden rounded-xl bg-slate-50 p-2;
@@ -910,6 +921,12 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .q-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  /* A question with many short calculation rows (mixedOps: six equations) gets
+     the same 3 x 2 shape as the comparison table. On a phone it stays one per
+     line, so the boxes keep their size. */
+  .add-rows--two {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   /* Side by side the two columns of a match board need shorter boxes. */

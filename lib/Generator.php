@@ -168,6 +168,55 @@ const GEN_TYPE_GROUPS = [
     ],
 ];
 
+/**
+ * How hard every exercise is for a first grader, on a 1-10 scale where 10 is the
+ * hardest exercise the generator can build. It is relative, not absolute: the peak
+ * (`equalSums`/`equalDifferences` = 10) is "arrange four numbers into two equations
+ * that give the same amount", because it needs trial and error plus two checks
+ * without any picture to lean on.
+ *
+ *   1  count                 look at a group and write how many there are
+ *   2  write / domino        the next or previous number; read pips and add
+ *   3  compare / countAndCompare / addPicture / outline / subtractDomino
+ *   4  compareGrid / crossOut / drawMissing / subtractPicture
+ *   5  mixedOps / crossOutExtra
+ *   6  missingNumber / missingNumberSub    find the hidden operand
+ *   7  pickAddends / multiCheck / subtractPair / subtractCheck   search a set
+ *   8  compareExpressions / storyChoice    two operations, or a story with choices
+ *   9  story                read a word problem, pick the operation, compute
+ *  10  equalSums / equalDifferences        split a target into two equal equations
+ *
+ * The score is shown next to every chip in the picker and drives the order of the
+ * tasks in a generated quiz (easiest first, see quiz_generate_types()).
+ */
+const GEN_TYPE_COMPLEXITY = [
+    'count' => 1,
+    'write' => 2,
+    'domino' => 2,
+    'compare' => 3,
+    'countAndCompare' => 3,
+    'addPicture' => 3,
+    'outline' => 3,
+    'subtractDomino' => 3,
+    'compareGrid' => 4,
+    'crossOut' => 4,
+    'drawMissing' => 4,
+    'subtractPicture' => 4,
+    'mixedOps' => 5,
+    'crossOutExtra' => 5,
+    'missingNumber' => 6,
+    'missingNumberSub' => 6,
+    'pickAddends' => 7,
+    'multiCheck' => 7,
+    'subtractPair' => 7,
+    'subtractCheck' => 7,
+    'compareExpressions' => 8,
+    'storyChoice' => 8,
+    'story' => 9,
+    'equalSums' => 10,
+    'equalDifferences' => 10,
+];
+
 /** Title, emoji and colour of a quiz built from one group of types. */
 const GEN_GROUP_LOOK = [
     'Palyginimas' => ['Palyginimų testas', '⚖️', 'sky'],
@@ -207,6 +256,22 @@ function gen_all_types(): array
 function gen_type_groups(): array
 {
     return GEN_TYPE_GROUPS;
+}
+
+/** How hard one question type is (1-10, 10 = the hardest exercise). */
+function gen_type_complexity(string $type): int
+{
+    return GEN_TYPE_COMPLEXITY[$type] ?? 5;
+}
+
+/** type => complexity, injected into the page for the picker badges. */
+function gen_type_complexity_map(): array
+{
+    $map = [];
+    foreach (gen_all_types() as $type) {
+        $map[$type] = gen_type_complexity($type);
+    }
+    return $map;
 }
 
 /** Keep only the known types, drop duplicates, sort into the picker order. */
@@ -656,7 +721,7 @@ function gen_compare_expressions(int $i, int $max): array
     return [
         'id' => "q{$i}",
         'type' => 'compareExpressions',
-        'instruction' => 'Suskaičiuok abi puses ir įrašyk reikiamą ženklą.',
+        'instruction' => 'Suskaičiuok abi puses ir įrašyk reikiamą ženklą. > < arba =',
         // Always the three signs - "≠" is not an answer to "is this more or less".
         'symbols' => ['>', '<', '='],
         'rows' => $rows,
@@ -1007,26 +1072,33 @@ function gen_missing_number(int $i, int $max, ?string $op = '+'): array
 }
 
 /**
- * Sudėtis ir atimtis viename veiksme (`3 + 4 = [ ]`, `9 − 2 = [ ]`). Every row
- * picks its own sign, and the first two rows always take different signs, so the
- * exercise really mixes both operations; only the results are asked for.
+ * Sudėtis ir atimtis viename veiksme (`3 + 4 = [ ]`, `9 − 2 = [ ]`). Six rows -
+ * three additions and three subtractions - shown as a 3 x 2 grid, the same shape
+ * the comparison table uses (`.add-rows--two`). Every row picks its own sign and
+ * the first two rows always take different signs, so the exercise really mixes
+ * both operations; only the results are asked for.
  */
 function gen_mixed_ops(int $i, int $max): array
 {
     $cap = gen_addend_max($max);
-    $count = gen_int(2, 3);
-    $first = gen_int(0, 1) === 0 ? '+' : '-';
+    // 3 x 2 = six equations, half of them additions and half subtractions.
+    $signs = array_merge(array_fill(0, 3, '+'), array_fill(0, 3, '-'));
+    shuffle($signs);
+    // The first two rows must not share the sign - otherwise the question does
+    // not look mixed at a glance.
+    if ($signs[0] === $signs[1]) {
+        for ($p = 2; $p < count($signs); $p++) {
+            if ($signs[$p] !== $signs[0]) {
+                [$signs[1], $signs[$p]] = [$signs[$p], $signs[1]];
+                break;
+            }
+        }
+    }
     $rows = [];
     $asked = [];
 
-    for ($r = 1; $r <= $count; $r++) {
-        if ($r === 1) {
-            $op = $first;
-        } elseif ($r === 2) {
-            $op = $first === '+' ? '-' : '+';
-        } else {
-            $op = gen_pick(['+', '-']);
-        }
+    for ($r = 1; $r <= count($signs); $r++) {
+        $op = $signs[$r - 1];
         do {
             // Both rows are written equations, so a subtraction may use the whole
             // range up to `max` just like the addition rows (whose sum reaches it).
@@ -1406,6 +1478,8 @@ function gen_plural(int $n, string $one, string $few, string $many): string
  * cycled when more tasks are asked for than the plan has entries. When every type
  * is selected the quiz is the old "mixed" one.
  *
+ * The finished questions are sorted by GEN_TYPE_COMPLEXITY, easiest first.
+ *
  * @param list<string> $types  question types (empty = all of them)
  * @param int          $max    highest amount used (5, 10 or 20)
  * @param int          $tasks  how many tasks the quiz should have (0 = one round of the plan)
@@ -1473,6 +1547,21 @@ function quiz_generate_types(array $types, int $max = 10, int $tasks = 0, string
         $questions[] = $argument === null ? $builder($i, $max) : $builder($i, $max, $argument);
         $i++;
     }
+
+    // EASIEST FIRST: a generated test warms up with counting and only then asks for
+    // a story or an equal-sums puzzle, so the child can build confidence instead of
+    // meeting the hardest exercise on question 1. The sort is stable (PHP >= 8.0),
+    // so exercises of the same difficulty keep the balanced, random order the plan
+    // built above (a refill plan is merged in, not appended as a second ramp).
+    usort($questions, static fn(array $a, array $b): int
+        => gen_type_complexity((string) ($a['type'] ?? '')) <=> gen_type_complexity((string) ($b['type'] ?? '')));
+    // Renumber, so the ids still follow the order the child sees (q1, q2, …).
+    foreach ($questions as $position => &$question) {
+        if (isset($question['id'])) {
+            $question['id'] = 'q' . ($position + 1);
+        }
+    }
+    unset($question);
 
     $focus = strtolower(trim($focus));
     if ($focus === '') {

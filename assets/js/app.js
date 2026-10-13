@@ -188,6 +188,9 @@ function app() {
     genGroups: {},
     genPresets: {},
     genTypes: [],
+    // How hard every exercise is (1-10, 10 = hardest), shown on its chip and
+    // used by the server to order a generated quiz from easiest to hardest.
+    genScores: {},
     genPickerOpen: false,
     // one exercise of a type, shown beside the picker while its chip is hovered
     preview: { type: '', label: '', loading: false, error: '' },
@@ -220,6 +223,7 @@ function app() {
       dom.host = this.$refs.qhost;
       this.quizzes = (window.__QUIZZES__ || []).map((q) => ({ ...q }));
       this.genGroups = window.__GEN_TYPE_GROUPS__ || {};
+      this.genScores = window.__GEN_TYPE_COMPLEXITY__ || {};
       this.genPresets = window.__GEN_PRESETS__ || {};
       this.bestStars = loadJSON(KEY_BEST, {});
       this.myQuizzes = loadJSON(KEY_CUSTOM, []);
@@ -528,6 +532,10 @@ function app() {
     },
     genGroupTypes(group) {
       return Object.keys(this.genGroups[group] || {});
+    },
+    /** Complexity of one exercise type (1-10, 10 = hardest) - see GEN_TYPE_COMPLEXITY. */
+    genScore(type) {
+      return Number(this.genScores[type]) || 5;
     },
     isGenType(type) {
       return this.genTypes.includes(type);

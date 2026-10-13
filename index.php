@@ -189,6 +189,7 @@ if (preg_match('#^/t/([A-Za-z0-9_-]{1,64})$#', $path, $matches)) {
 $quizzes = quiz_list();
 $groups = quiz_list_grouped();
 $genGroups = gen_type_groups();
+$genComplexity = gen_type_complexity_map();
 $genPresets = [];
 foreach (GEN_FOCUSES as $genFocus) {
     $genPresets[$genFocus] = gen_focus_types($genFocus);
@@ -218,6 +219,7 @@ header('X-Content-Type-Options: nosniff');
   window.__START_QUIZ__ = <?= json_for_script($startQuiz) ?>;
   window.__START_SCREEN__ = <?= json_for_script($startScreen) ?>;
   window.__GEN_TYPE_GROUPS__ = <?= json_for_script($genGroups) ?>;
+  window.__GEN_TYPE_COMPLEXITY__ = <?= json_for_script($genComplexity) ?>;
   window.__GEN_PRESETS__ = <?= json_for_script($genPresets) ?>;
 </script>
 <script type="importmap"><?= json_for_script(['imports' => js_import_map()]) ?></script>
@@ -320,6 +322,10 @@ header('X-Content-Type-Options: nosniff');
                   Iš kokių užduočių sudaryti testą?
                   <span class="font-normal text-slate-400">(nepažymėjus nieko – iš visų)</span>
                 </span>
+                <p class="text-sm font-bold text-slate-400">
+                  Skaičius prie užduoties – jos sudėtingumas nuo 1 iki 10 (10 – sunkiausia).
+                  Sugeneruotame teste užduotys sudėliojamos nuo paprasčiausių iki sunkiausių.
+                </p>
 
                 <template x-for="(types, group) in genGroups" :key="group">
                   <div class="mt-3">
@@ -333,7 +339,10 @@ header('X-Content-Type-Options: nosniff');
                                 @click="toggleGenType(type); showTypePreview(type, label)"
                                 @mouseenter="showTypePreview(type, label)"
                                 @focus="showTypePreview(type, label)"
-                                :aria-pressed="isGenType(type)" x-text="label"></button>
+                                :aria-pressed="isGenType(type)"
+                                :title="'Sudėtingumas ' + genScore(type) + ' iš 10 (1 – lengviausia, 10 – sunkiausia). Sugeneruotame teste užduotys sudėliojamos nuo paprasčiausių iki sunkiausių.'">
+                          <span x-text="label"></span><span class="type-chip__score" x-text="genScore(type)"></span>
+                        </button>
                       </template>
                       <label class="type-voice" x-show="group === 'Pasakojimai'" x-cloak
                              title="Įgarsinti pasakojimų uždavinius (atskirai nuo kitų uždavinių). Pagal nutylėjimą pasakojimai yra tyliai – juos reikia perskaityti.">
@@ -357,6 +366,9 @@ header('X-Content-Type-Options: nosniff');
                   <div class="type-preview__head">
                     <span class="type-preview__icon" aria-hidden="true">👀</span>
                     <span class="type-preview__label" x-text="preview.label || 'Pavyzdys'"></span>
+                    <span class="type-preview__score" x-show="preview.type" x-cloak
+                          :title="'Sudėtingumas ' + genScore(preview.type) + ' iš 10'"
+                          x-text="'Sudėtingumas ' + genScore(preview.type) + '/10'"></span>
                   </div>
                   <div class="type-preview__body" x-ref="previewBody"></div>
                   <p class="type-preview__placeholder" x-show="!preview.type && !preview.loading" x-cloak>
