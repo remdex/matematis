@@ -568,9 +568,11 @@ function gen_compare_grid(int $i, int $max): array
 }
 
 /**
- * One side of a `compareExpressions` row: `a + b` or `a − b`, never negative and
- * never bigger than what a child can still count (an addend stays inside a
- * countable group, a difference is at least 1).
+ * One side of a `compareExpressions` row: `a + b` or `a − b`, never negative.
+ * This is a written equation (nothing is drawn or counted), so both sides may
+ * use the whole range up to `max`: an addend stays inside a countable group
+ * (at most 10) and the sum may reach `max`, a minuend goes up to `max` and the
+ * difference is at least 1.
  *
  * @return array{a:int,b:int,op:string,value:int}
  */
@@ -581,7 +583,7 @@ function gen_expression(int $max): array
         [$a, $b] = gen_split(gen_int(2, $max), $cap);
         $op = '+';
     } else {
-        [$a, $b] = gen_difference($max, $cap);
+        [$a, $b] = gen_difference($max, GEN_MAX_LIMIT);
         $op = '-';
     }
     return ['a' => $a, 'b' => $b, 'op' => $op, 'value' => gen_op_apply($op, $a, $b)];
@@ -597,11 +599,13 @@ function gen_expression(int $max): array
 function gen_expression_for(int $target, int $max): ?array
 {
     $cap = gen_addend_max($max);
+    $upper = gen_max($max);
     $options = [];
     if ($target >= 2) {
         $options[] = '+';
     }
-    if ($target >= 1 && $cap > $target) {
+    // A subtraction needs a minuend bigger than the (positive) difference.
+    if ($target >= 1 && $upper > $target) {
         $options[] = '-';
     }
     if ($options === []) {
@@ -611,7 +615,7 @@ function gen_expression_for(int $target, int $max): ?array
     if ($op === '+') {
         [$a, $b] = gen_split($target, $cap);
     } else {
-        $a = gen_int($target + 1, $cap);
+        $a = gen_int($target + 1, $upper);
         $b = $a - $target;
     }
     return ['a' => $a, 'b' => $b, 'op' => $op, 'value' => $target];
@@ -980,8 +984,9 @@ function gen_missing_number(int $i, int $max, ?string $op = '+'): array
     for ($r = 1; $r <= gen_int(2, 3); $r++) {
         do {
             if ($op === '-') {
-                // a − b ≥ 1, so there is always a difference to find.
-                [$a, $b] = gen_difference($max, $cap);
+                // A written equation - nothing is counted here - so the minuend
+                // may use the whole range up to `max` (a − b ≥ 1).
+                [$a, $b] = gen_difference($max, GEN_MAX_LIMIT);
             } else {
                 [$a, $b] = gen_split(gen_int(2, $max), $cap);
             }
@@ -1023,7 +1028,9 @@ function gen_mixed_ops(int $i, int $max): array
             $op = gen_pick(['+', '-']);
         }
         do {
-            [$a, $b] = $op === '-' ? gen_difference($max, $cap) : gen_split(gen_int(2, $max), $cap);
+            // Both rows are written equations, so a subtraction may use the whole
+            // range up to `max` just like the addition rows (whose sum reaches it).
+            [$a, $b] = $op === '-' ? gen_difference($max, GEN_MAX_LIMIT) : gen_split(gen_int(2, $max), $cap);
             $key = "{$a},{$b},{$op}";
         } while (in_array($key, $asked, true));
         $asked[] = $key;
