@@ -75,8 +75,8 @@ export function speechText(question) {
   return /[.!?…]$/.test(instruction) ? `${instruction} ${hint}` : `${instruction}. ${hint}`;
 }
 
-/** The two "pasakojimo uždavinys" types: they are read by the child, not to it. */
-const STORY_TYPES = new Set(['story', 'storyChoice']);
+/** The "pasakojimo uždavinys" types: they are read by the child, not to it. */
+const STORY_TYPES = new Set(['story', 'storyChoice', 'storyMore', 'storyRead']);
 
 /**
  * May this question have a 🔊 button at all?

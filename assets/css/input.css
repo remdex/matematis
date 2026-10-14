@@ -368,6 +368,28 @@
   .symbol-slot.is-active {
     box-shadow: 0 0 0 6px rgba(56, 189, 248, 0.35);
   }
+  /* compareResults: the two equations on top, and underneath the two written
+     results (X left, Y right) with the sign between them - so the child compares
+     two numbers it has just worked out itself. Both lines use the SAME column
+     template (the middle column is exactly as wide as the sign box), otherwise
+     X/Y would not sit under their own equation. */
+  .q-cmp-results .add-rows {
+    --cre-mid: clamp(3.25rem, 13vw, 5.5rem);
+  }
+  .cre-top,
+  .cre-bottom {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--cre-mid, 4rem) minmax(0, 1fr);
+    align-items: center;
+    justify-items: center;
+    gap: clamp(0.35rem, 1.4vw, 0.7rem);
+    width: 100%;
+  }
+  .cre-arrow {
+    @apply font-black text-sky-400;
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    line-height: 1;
+  }
 
   /* compare grid */
   .q-grid {
@@ -600,16 +622,22 @@
     font-size: clamp(1.35rem, 5vw, 1.9rem);
   }
   .triangle-target {
-    @apply relative flex shrink-0 items-end justify-center;
+    @apply relative shrink-0;
     width: clamp(3.5rem, 15vw, 4.75rem);
     height: clamp(3.25rem, 14vw, 4.5rem);
   }
   .triangle-target .tri-shape {
     @apply absolute inset-0;
   }
+  /* The number goes to the middle of the drawn triangle. The polygon is
+     "50,10 92,86 8,86", so its optical centre (incenter) is ~61% down the box,
+     not the 50% of the bounding box. */
   .triangle-target .tri-num {
-    @apply relative font-black text-amber-900;
-    padding-bottom: 0.2rem;
+    @apply absolute font-black text-amber-900;
+    left: 50%;
+    top: 61%;
+    transform: translate(-50%, -50%);
+    line-height: 1;
     font-size: clamp(1.05rem, 4vw, 1.4rem);
   }
 
@@ -1215,6 +1243,13 @@
   .add-rows:not(:has(.eq-group)) .eq-num,
   .add-rows:not(:has(.eq-group)) .eq-sign {
     font-size: 17px !important;
+  }
+  /* A dashed vertical rule between the single exercises of one question, so they
+     do not run into each other now that they sit on one line (the same dashed
+     line the cards are separated with, only upright). */
+  .add-rows:not(:has(.eq-group)) .add-row + .add-row {
+    border-left: 1px dashed #64748b !important;
+    padding-left: 4mm !important;
   }
 
   /* Hand-drawn crosses / lines stay visible (in black). */

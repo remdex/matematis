@@ -276,8 +276,8 @@ const TTS_SYMBOL_WORDS = [
     '+' => 'plius', '-' => 'minus', '−' => 'minus',
 ];
 
-/** The two "read by the child" types: silent unless the author opted in. */
-const TTS_STORY_TYPES = ['story', 'storyChoice'];
+/** The "read by the child" types: silent unless the author opted in. */
+const TTS_STORY_TYPES = ['story', 'storyChoice', 'storyMore', 'storyRead'];
 
 /** Per-type default instruction - keep in sync with quiz-types.js. */
 function tts_default_instructions(): array
@@ -286,6 +286,7 @@ function tts_default_instructions(): array
         'compare' => 'Suskaičiuok ir įrašyk reikiamą ženklą.',
         'compareGrid' => 'Palygink skaičius ir įrašyk ženklą.',
         'compareExpressions' => 'Suskaičiuok abi puses ir įrašyk reikiamą ženklą.',
+        'compareResults' => 'Suskaičiuok abi puses, įrašyk skaičius ir palygink.',
         'count' => 'Suskaičiuok ir įrašyk skaičių.',
         'countAndCompare' => 'Suskaičiuok, įrašyk skaičius ir palygink.',
         'outline' => 'Apibrauk kortelę, kurioje yra daugiau.',
@@ -293,6 +294,8 @@ function tts_default_instructions(): array
         'write' => 'Įrašyk teisingą skaičių.',
         'story' => 'Perskaityk pasakojimą ir atsakyk į klausimą.',
         'storyChoice' => 'Perskaityk pasakojimą ir atsakyk į klausimą.',
+        'storyMore' => 'Perskaityk pasakojimą ir atsakyk į klausimą.',
+        'storyRead' => 'Perskaityk ir atsakyk į klausimą.',
         'addPicture' => 'Parašyk ir atlik pavaizduotus sudėties veiksmus.',
         'subtractPicture' => 'Suskaičiuok, kiek nubraukta, ir parašyk atimties veiksmą.',
         'missingNumber' => 'Įrašyk trūkstamą skaičių.',
@@ -302,6 +305,7 @@ function tts_default_instructions(): array
         'subtractDomino' => 'Suskaičiuok taškus abiejose pusėse ir parašyk skirtumą.',
         'multiCheck' => 'Pažymėk veiksmus, kurie duoda nurodytą skaičių.',
         'subtractCheck' => 'Pažymėk atimties veiksmus, kurių atsakymas yra nurodytas skaičius.',
+        'mixedCheck' => 'Pažymėk veiksmus, kurių atsakymas yra nurodytas skaičius.',
         'pickAddends' => 'Sudėk du skaičius ir nubrauk tą, kurio nereikia.',
         'subtractPair' => 'Atimk du skaičius ir nubrauk tą, kurio nereikia.',
         'equalSums' => 'Sudėk skaičius taip, kad abiejų veiksmų gautum tiek pat.',

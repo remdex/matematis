@@ -21,10 +21,10 @@ declare(strict_types=1);
  */
 
 const QUIZ_TYPES = [
-    'compare', 'compareGrid', 'compareExpressions', 'count', 'countAndCompare', 'outline', 'crossOut', 'write', 'story', 'storyChoice',
+    'compare', 'compareGrid', 'compareExpressions', 'compareResults', 'count', 'countAndCompare', 'outline', 'crossOut', 'write', 'story', 'storyChoice', 'storyMore', 'storyRead',
     'addPicture', 'subtractPicture', 'missingNumber', 'missingNumberSub', 'mixedOps',
     'domino', 'subtractDomino',
-    'multiCheck', 'subtractCheck', 'pickAddends', 'subtractPair',
+    'multiCheck', 'subtractCheck', 'mixedCheck', 'pickAddends', 'subtractPair',
     'equalSums', 'equalDifferences', 'drawMissing', 'crossOutExtra', 'match',
 ];
 const QUIZ_SYMBOLS = ['>', '<', '=', '≠'];
@@ -283,6 +283,16 @@ function quiz_op_apply(string $op, int $a, int $b): int
 }
 
 /**
+ * The operation of one item of a `mixedCheck` question (a mixed check-list: the
+ * rows of one card carry their own sign, unlike `multiCheck` / `subtractCheck`
+ * where the whole question shares the type's). Same rule as the JS renderer.
+ */
+function quiz_item_op(mixed $item): string
+{
+    return (is_array($item) ? ($item['op'] ?? '') : '') === '-' ? '-' : '+';
+}
+
+/**
  * Where the single empty box of a `missingNumber` row sits: on the left (the
  * first number), in the middle (the second) or on the right (the result).
  * Anything else means "left" - the same default the JS renderer uses.
@@ -465,6 +475,25 @@ function quiz_derived_answer(array $question): mixed
             }
             return $answers === [] ? null : $answers;
 
+        // The scaffolded twin: the child writes BOTH results down and then the
+        // sign, so every row answers [left result, sign, right result].
+        case 'compareResults':
+            $rows = (array) ($question['rows'] ?? []);
+            $answers = [];
+            foreach ($rows as $row) {
+                $left = quiz_expression($row['left'] ?? null);
+                $right = quiz_expression($row['right'] ?? null);
+                if ($left === null || $right === null) {
+                    return null;
+                }
+                $answers[] = [
+                    (string) $left['value'],
+                    quiz_symbol_value($left['value'], $right['value'], $symbols),
+                    (string) $right['value'],
+                ];
+            }
+            return $answers === [] ? null : $answers;
+
         case 'count':
             $scenes = (array) ($question['scenes'] ?? []);            if ($scenes === [] && isset($question['scene'])) {
                 $scenes = [['figures' => $question['scene']['figures'] ?? $question['scene']]];
@@ -500,6 +529,8 @@ function quiz_derived_answer(array $question): mixed
 
         case 'story':
         case 'storyChoice':
+        case 'storyMore':
+        case 'storyRead':
             // A word problem: the answer is what the author wrote (a number, or
             // the id/label of the option to tap) - it cannot be derived.
             return $question['answer'] ?? null;
@@ -597,6 +628,25 @@ function quiz_derived_answer(array $question): mixed
                 if (!is_numeric($item['a'] ?? null) || !is_numeric($item['b'] ?? null)) {
                     return null;
                 }
+                if (quiz_op_apply($op, (int) $item['a'], (int) $item['b']) === (int) $target) {
+                    $answers[] = quiz_text($item['id'] ?? null) ?: 'c' . ($i + 1);
+                }
+            }
+            return $answers;
+
+        case 'mixedCheck':
+            // Every row carries its own sign ("+" or "-").
+            $target = $question['target'] ?? null;
+            $items = array_values((array) ($question['items'] ?? []));
+            if (!is_numeric($target)) {
+                return null;
+            }
+            $answers = [];
+            foreach ($items as $i => $item) {
+                if (!is_numeric($item['a'] ?? null) || !is_numeric($item['b'] ?? null)) {
+                    return null;
+                }
+                $op = quiz_item_op($item);
                 if (quiz_op_apply($op, (int) $item['a'], (int) $item['b']) === (int) $target) {
                     $answers[] = quiz_text($item['id'] ?? null) ?: 'c' . ($i + 1);
                 }
@@ -805,6 +855,7 @@ function quiz_validate(mixed $raw): array
                 break;
 
             case 'compareExpressions':
+            case 'compareResults':
                 $rows = $question['rows'] ?? null;
                 if (!is_array($rows) || $rows === []) {
                     $errors[] = "#{$n} ({$type}): reikia ne tuščio masyvo „rows“.";
@@ -901,6 +952,8 @@ function quiz_validate(mixed $raw): array
 
             case 'story':
             case 'storyChoice':
+            case 'storyMore':
+            case 'storyRead':
                 $answer = $question['answer'] ?? null;
                 if ($answer === null || $answer === '' || $answer === []) {
                     $errors[] = "#{$n} (story): reikia „answer“ – teisingo atsakymo.";
@@ -1049,6 +1102,57 @@ function quiz_validate(mixed $raw): array
                 }
                 if (!isset($question['answer']) && count(quiz_derived_answer($question) ?: []) === count($items)) {
                     $warnings[] = "#{$n} ({$type}): visi veiksmai duoda " . (int) $question['target'] . ' – vaikui užtenka pažymėti visus. Įdėk ir netinkančių veiksmų.';
+                }
+                break;
+
+            case 'mixedCheck':
+                $items = $question['items'] ?? null;
+                if (!is_array($items) || $items === []) {
+                    $errors[] = "#{$n} (mixedCheck): reikia „items“ masyvo.";
+                    break;
+                }
+                $target = $question['target'] ?? null;
+                if (!is_numeric($target)) {
+                    $errors[] = "#{$n} (mixedCheck): reikia skaičiaus „target“ (kokį atsakymą reikia surasti).";
+                }
+                foreach ($items as $j => $item) {
+                    if (!is_numeric($item['a'] ?? null) || !is_numeric($item['b'] ?? null)) {
+                        $errors[] = "#{$n} (mixedCheck): elementas " . ($j + 1) . ' be „a“/„b“ skaičių.';
+                        continue;
+                    }
+                    if (!in_array($item['op'] ?? '', ['+', '-'], true)) {
+                        $errors[] = "#{$n} (mixedCheck): elementas " . ($j + 1) . ' – „op“ gali būti tik "+" arba "-" (kiekvienas veiksmas turi savo ženklą).';
+                        continue;
+                    }
+                    if ($item['op'] === '-' && (int) $item['a'] < (int) $item['b']) {
+                        $warnings[] = "#{$n} (mixedCheck): elementas " . ($j + 1) . ' – „a“ mažesnis už „b“, atimtis duotų neigiamą skaičių.';
+                    }
+                }
+                if (is_numeric($target) && !isset($question['answer'])) {
+                    $fits = quiz_derived_answer($question) ?: [];
+                    if ($fits === []) {
+                        $warnings[] = "#{$n} (mixedCheck): nė vienas veiksmas neduoda " . (int) $target . ' – nebus ką pažymėti.';
+                    } elseif (count($fits) === count($items)) {
+                        $warnings[] = "#{$n} (mixedCheck): visi veiksmai duoda " . (int) $target . ' – vaikui užtenka pažymėti visus. Įdėk ir netinkančių veiksmų.';
+                    } else {
+                        // A mixed exercise should really mix: both signs must fit.
+                        $fitSigns = [];
+                        foreach ($items as $item) {
+                            $itemOp = $item['op'] ?? '';
+                            if (!is_numeric($item['a'] ?? null) || !is_numeric($item['b'] ?? null)) {
+                                continue;
+                            }
+                            if (!in_array($itemOp, ['+', '-'], true)) {
+                                continue;
+                            }
+                            if (quiz_op_apply($itemOp, (int) $item['a'], (int) $item['b']) === (int) $target) {
+                                $fitSigns[$itemOp] = true;
+                            }
+                        }
+                        if (count($fitSigns) === 1) {
+                            $warnings[] = "#{$n} (mixedCheck): tinka tik „" . array_key_first($fitSigns) . '“ veiksmai – įdėk ir kito ženklo veiksmą, kuris duotų tą patį skaičių.';
+                        }
+                    }
                 }
                 break;
 

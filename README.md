@@ -30,7 +30,7 @@ data/quizzes/*.json  the quizzes (this *is* the content)
 cache/tts/*.mp3      the spoken instructions, generated once (see §4)
 assets/css/input.css Tailwind source  ──build──▶ assets/css/app.css (shipped)
 assets/js/quiz-render.js  renderer core: type registry, normalisation, answers
-assets/js/quiz-types.js   the 26 question types (compare, count, addPicture, subtractPicture, …)
+assets/js/quiz-types.js   the 30 question types (compare, count, addPicture, subtractPicture, …)
 assets/js/scribble.js     finger/mouse drawing layer with hit testing
 assets/js/figures.js      SVG figure library (shapes, objects, colours)
 assets/js/app.js          Alpine app shell: picker → play → builder
@@ -98,12 +98,15 @@ prints it.
 
 They are also **small** (42px for a number, 34px for a sign) - a handwritten 1-2 digit
 answer needs no more - and the rows of a pure calculation exercise (`mixedOps`,
-`missingNumber`, `compareExpressions`) **flow next to each other** instead of one row per
-line, so a whole question often fits on a single line. Rows that carry a picture keep the
-full width (they are the only ones containing an `.eq-group`).
+`missingNumber`, `compareExpressions`, `compareResults`) **flow next to each other**
+instead of one row per line, so a whole question often fits on a single line. A **dashed
+vertical rule** (`.add-row + .add-row { border-left: 1px dashed … }`, the same dashed line
+the tasks are separated with, only upright) keeps the single exercises apart once they sit
+side by side. Rows that carry a picture keep the full width (they are the only ones
+containing an `.eq-group`).
 
 Choice rows (`.check-list .check-item` - used by `story` choice and by `multiCheck` /
-`subtractCheck`) print as plain `[ ] option` lines: the **small tick box stays** (that is
+`subtractCheck` / `mixedCheck`) print as plain `[ ] option` lines: the **small tick box stays** (that is
 how the answer is marked) and the big frame drawn around every option is dropped, which
 keeps the list compact.
 
@@ -149,7 +152,7 @@ fields are required — instructions, answers, colours and titles get sensible d
 
 | Field | Meaning |
 | --- | --- |
-| `type` | one of the 26 types below |
+| `type` | one of the 30 types below |
 | `instruction` | the big text at the top (also read aloud) |
 | `hint` | small grey line under the instruction |
 | `answer` | optional — for most types it is **calculated** from the numbers, so you usually omit it (only `outline`, `crossOut` and an ambiguous `match` need it) |
@@ -292,7 +295,7 @@ question — several dominoes in one card make the pips unreadable.
 `subtractDomino` reads the same tile as `[ ] − [ ] = [ ]` (`3` and `2` pips → `3 − 2 = 1`);
 put the bigger half in `left`, otherwise the difference is negative (the validator warns).
 
-### 2.10 `multiCheck` / `subtractCheck` — tick every equation that fits
+### 2.10 `multiCheck` / `subtractCheck` / `mixedCheck` — tick every equation that fits
 
 "Pažymėk sudėties veiksmus, kuriais gautum skaičių 8": a grid of sums with a tick box,
 the child marks every one that equals `target` (any number of them).
@@ -308,6 +311,23 @@ is derived.
 `subtractCheck` is the same with `a − b`, `target` is the answer the subtraction must
 have (`{ "a": 6, "b": 3 }` fits `target: 3`) and the printed default is `a − b`. An
 `a` smaller than `b` would go below zero, so the validator warns about it.
+
+`mixedCheck` is the **mixed twin**: the equations of one card may be additions *and*
+subtractions, so every item carries its own sign. "Pažymėk veiksmus, kurių atsakymas
+yra 5" — the child has to work out each row's sign before it can decide.
+
+```json
+{ "type": "mixedCheck", "target": 5,
+  "items": [ { "a": 3, "b": 2, "op": "+" },   // 3 + 2 = 5 → tick
+             { "a": 7, "b": 2, "op": "-" },   // 7 − 2 = 5 → tick
+             { "a": 4, "b": 4, "op": "+" },   // 4 + 4 = 8 → leave
+             { "a": 6, "b": 2, "op": "-" } ] } // 6 − 2 = 4 → leave
+```
+
+`op` is required on every item (`"+"` or `"-"`) and the prompt inside the card reads
+"Rezultatas turi būti 5" (the pure types say "Suma" / "Skirtumas"). The generator always
+makes at least one fitting addition *and* one fitting subtraction; the validator warns
+when only one of the two signs fits (the exercise would not be mixed any more).
 
 ### 2.11 `pickAddends` / `subtractPair` — build an equation from the given numbers
 
@@ -463,6 +483,26 @@ second one `6 + 3 ? 10 − 3` (9 > 7, so `>`).
 The generator builds it from the **Veiksmai** group (see §7);
 `data/quizzes/palygink-veiksmus.json` is a hand written example.
 
+#### `compareResults` — the same exercise, but both sides are written down first
+
+The easier twin of `compareExpressions` (**same JSON**, only the `type` differs). The two
+equations are printed one above the other and the child writes the result of *each* side
+into its own box before choosing the sign, so the comparison is always made between two
+numbers it has just worked out itself:
+
+```
+        7 − 1        ↓        8 − 1
+        [ 6 ]     [ > < = ]     [ 7 ]
+```
+
+* the answer of a row is `[left result, sign, right result]` — the example above answers
+  `["6", "=", "6"]`
+* both numbers are typed on the same shared number pad as the rest of the app and the
+  sign comes from the same shared row of sign buttons; the `↓` only shows where the two
+  results belong (`.cre-top` / `.cre-bottom` in `input.css`)
+* the generator builds it from the very same rows as `compareExpressions`
+  (`gen_compare_rows()`), and it scores **6/10** against that exercise's 8/10 (see §7)
+
 ### 2.17 `mixedOps` — sudėtis ir atimtis viename veiksme
 
 "Sudėtis ir atimtis kartu": the same equation as `missingNumber`, but every row picks
@@ -491,7 +531,7 @@ The generator builds it (2-3 rows per question, the first two rows always take d
 signs) from the **Skaičiavimas** group; `data/quizzes/misrus-veiksmai.json` is a hand
 written example.
 
-### 2.18 `story` — a word problem with one answer
+### 2.18 `story` / `storyChoice` / `storyMore` / `storyRead` — a word problem with one answer
 
 "Pasakojimo uždavinys": a short story asks a question (who has more, which is fewer,
 how many are missing, …) and the child gives exactly **one** answer. The story *is* the
@@ -511,7 +551,7 @@ keeps its button unless a question sets `"say": false`.
 ```
 
 ```json
-{ "type": "story",
+{ "type": "storyMore",
   "instruction": "Katė turi 9 žaisliukus, o šuniukas – 7. Kiek žaisliukų trūksta šuniukui, kad abu turėtų po lygiai?",
   "answer": 2 }
 ```
@@ -528,10 +568,52 @@ keeps its button unless a question sets `"say": false`.
 ("Kas surinko daugiau?"); it only exists so the generator can offer those under their
 own chip. Hand-written quizzes can use `story` for both kinds.
 
+`storyMore` is the same widget again, for the **difference** stories — the child writes
+the difference of the two amounts, which is hidden behind a comparison:
+
+```json
+{ "type": "storyMore",
+  "instruction": "Lukas turi 5 obuolius, Luknė turi 3 obuolius. Kiek daugiau obuolių turi Lukas?",
+  "answer": 2 }
+```
+
+Neither amount is the answer (and their sum is the trap), so `answer` is required — it
+cannot be derived from the text. The question may ask about the child with more
+("Kiek daugiau…?") or with less ("Kiek mažiau…?"); the answer is the same difference.
+
 `data/quizzes/pasakojimu-uzdaviniai.json` is the worked example (the stories from
 the workbook, nine of them a choice and four a number). The generator builds
 stories of its own from the **Pasakojimai** group (see §7): number-answer ones with
-`story` and choice ones with `storyChoice`.
+`story`, choice ones with `storyChoice`, comparison ones ("kiek daugiau/mažiau") with
+`storyMore` and the number-words reading tasks with `storyRead`.
+
+`storyRead` — the "suvokimo užduotis" (comprehension task) — is the reading version: a
+single-line task whose numbers are written **as words** ("Iš dviejų atimk tris ir
+parašyk atsakymą.") or **as digits** ("Iš 2 atimk 3 ir parašyk atsakymą."), while one
+task keeps **one** style throughout. It is the same story widget with a numeric answer,
+so the child only has to decode the sentence and write the result on the number pad.
+There are three variants:
+
+```json
+{ "type": "storyRead",
+  "instruction": "Iš septynių atimk tris ir parašyk atsakymą.",
+  "answer": 4 }
+```
+
+```json
+{ "type": "storyRead",
+  "instruction": "Kas daugiau – 8 ar 5? Parašyk atsakymą.",
+  "answer": 8 }
+```
+
+* `-` — "Iš {a} atimk {b}…" (the minuend is always bigger, so the difference stays ≥ 1)
+* `+` — "Prie {a} pridėk {b}…" (the sum stays within 10)
+* `compare` — "Kas daugiau/mažiau – {a} ar {b}?" (the answer is the number that was asked
+  for)
+
+Because the words themselves have to be read, a `storyRead` question is silent by
+default like the other story types. `data/quizzes/suvokimo-uzduotys.json` is a worked
+example (both word and digit tasks, all three variants).
 
 ### Figures (group spec)
 
@@ -671,7 +753,7 @@ next tap (that is the only thing that costs credits).
 
 | JSON field | Read aloud |
 | --- | --- |
-| a `story` / `storyChoice` question | **nothing** — silent unless the question sets `"say": true` |
+| a `story` / `storyChoice` / `storyMore` / `storyRead` question | **nothing** — silent unless the question sets `"say": true` |
 | `item.prompt` of a `write` question | its own 🔊 (small, next to the prompt) — every condition is a sentence of its own |
 | `readAloud` | when set, exactly that |
 | `instruction` + `hint` | default: "instruction. hint" |
@@ -765,9 +847,9 @@ ticks its whole family, and nothing ticked means every type):
 | Group | Types |
 | --- | --- |
 | Palyginimas | `compare`, `compareGrid` |
-| Skaičiavimas | `count`, `countAndCompare`, `write`, `mixedOps` |
-| Veiksmai | `compareExpressions` |
-| Pasakojimai | `story`, `storyChoice` |
+| Skaičiavimas | `count`, `countAndCompare`, `write`, `mixedOps`, `mixedCheck` |
+| Veiksmai | `compareResults`, `compareExpressions` |
+| Pasakojimai | `story`, `storyChoice`, `storyMore`, `storyRead` |
 | Braižymas | `outline`, `crossOut` |
 | Sudėtis | `addPicture`, `missingNumber`, `domino`, `pickAddends`, `equalSums`, `multiCheck`, `drawMissing` |
 | Atimtis | `subtractPicture`, `missingNumberSub`, `subtractDomino`, `subtractPair`, `equalDifferences`, `subtractCheck`, `crossOutExtra` |
@@ -787,11 +869,11 @@ error plus two checks with nothing to count:
 | 2 | `write`, `domino` |
 | 3 | `compare`, `countAndCompare`, `addPicture`, `outline`, `subtractDomino` |
 | 4 | `compareGrid`, `crossOut`, `drawMissing`, `subtractPicture` |
-| 5 | `mixedOps`, `crossOutExtra` |
-| 6 | `missingNumber`, `missingNumberSub` |
+| 5 | `mixedOps`, `crossOutExtra`, `storyRead` |
+| 6 | `missingNumber`, `missingNumberSub`, `compareResults` |
 | 7 | `pickAddends`, `multiCheck`, `subtractPair`, `subtractCheck` |
-| 8 | `compareExpressions`, `storyChoice` |
-| 9 | `story` |
+| 8 | `mixedCheck`, `compareExpressions`, `storyChoice` |
+| 9 | `story`, `storyMore` |
 | 10 | `equalSums`, `equalDifferences` |
 
 `GEN_TYPE_COMPLEXITY` is the single source of truth, exposed to the page as
@@ -837,7 +919,9 @@ response.
   side is an addition or a subtraction, so all four combinations appear), the result
   stays within `max` and no side goes below 1. The printed sides are never identical
   (that would make `=` a give-away), rows never repeat, and `=` is never the majority —
-  every fourth row is deliberately built as an `=` case, but only one per question
+  every fourth row is deliberately built as an `=` case, but only one per question.
+  `compareResults` is generated from the very same rows (`gen_compare_rows()`) and only
+  asks for the two results as well
 * `missingNumber` / `missingNumberSub`: the empty box is on the **left or in the middle**
   (never on the result — the missing number must not be just the answer) and the equation
   uses numbers a child can handle — an addend of a picture stays inside a countable group
@@ -849,9 +933,12 @@ response.
   never exceeds it, a difference is never 0), and only the result is asked for
 * `story`: a little story with numbers in it ("Jonukas turėjo 5 obuolius...") built from
   a random name and a random object, and the child writes the answer. **Both operations**
-  are generated — the subtraction templates ("...atidavė 3..., kiek liko?") and the
-  addition ones ("...davė dar 3..., kiek dabar turi?"); the two given numbers never drop
-  below 2 (so the plural noun forms always fit) and the answer stays between 1 and `max`
+  are generated in two flavours each — the subtraction ones ("...atidavė 3..., kiek
+  liko?" and "...bet 2 pametė, kiek dabar turi?", where nobody took them away) and the
+  addition ones ("...davė dar 3..., kiek dabar turi?" and "...ir dar 3 gavo dovanų, kiek
+  dabar turi?"), plus the three "neturėjo ..." (zero-in-the-condition) variants; the two
+  given numbers never drop below 2 (so the plural noun forms always fit) and the answer
+  stays between 1 and `max`
 * `storyChoice`: the same names and objects, but the answer is chosen from buttons. Four
   variants — `who` ("Kas turi daugiau?" between two children), `which` ("Ko turi
   mažiau?" between two things one child has), `equal` ("Ar turi po lygiai, ar vienas turi
@@ -860,7 +947,24 @@ response.
   `equal` case), so "daugiau/mažiau" has exactly one answer; the Lithuanian number forms
   (`gen_noun_form`) and the capitalised option labels (`gen_ucfirst`, which also knows
   ž/š/č) are shared with `story`
-* `addPicture` / `domino` / `pickAddends` / `equalSums` / `multiCheck` / `drawMissing`:
+* `storyMore`: the "kiek daugiau / mažiau" story — two children and two **different**
+  amounts (both ≥ 2, so the plural noun form fits), and the child writes the difference:
+  "Lukas turi 5 obuolius, Luknė turi 3 obuolius. Kiek daugiau obuolių turi Lukas?" (→ 2).
+  The question asks either about the child with more or the one with less, so both
+  phrasings appear; either way the answer is the difference. This is the one story where
+  the operation is not stated („atidavė“/„davė“) but has to be read out of the
+  comparison, which is why it shares level **9** with `story`
+* `storyRead`: the "suvokimo užduotis" — a single-line task whose numbers are written
+  **as words** or **as digits** (one style for the whole task, chosen at random): "Iš
+  dviejų atimk tris ir parašyk atsakymą." / "Prie 4 pridėk 5 ir parašyk atsakymą." / "Kas
+  daugiau – 8 ar 5? Parašyk atsakymą.". All three variants are generated (subtraction,
+  addition and the "kas daugiau/mažiau" comparison), only the answer is typed, and every
+  number stays within **1..10** (the words a first grader reads) whatever `max` was
+  asked for — the subtraction keeps `a > b` (so the difference is ≥ 1) and the addition
+  keeps the sum ≤ 10. It is level **5**: the arithmetic is easy, but the sentence has to
+  be read
+* `addPicture` / `domino` / `pickAddends` / `equalSums` / `multiCheck` / `mixedCheck` /
+  `drawMissing`:
   the sum or target stays within `max` (so **iki 20 really means up to 20**), but one
   **addend never shows more than 10 things**: a figure group holds at most 10 objects
   and a domino half has at most 6 pips (so one tile adds up to 12). Every generated
@@ -868,7 +972,11 @@ response.
   The two addends of
   a picture are never both the same group, a `pickAddends` bank
   holds exactly one pair that fits `target`, `multiCheck` has at least two fitting and
-  two non-fitting sums, `drawMissing` frames always have spare cells, and no exercise
+  two non-fitting sums (its `target` is never below 4 — with 2 or 3 only a single sum
+  reaches it, and the card would print the same equation twice), `mixedCheck` adds them
+  up **and** subtracts (two additions + one subtraction, or the other way round, always
+  fit, the rest never do, and every row keeps its own sign), `drawMissing` frames always
+  have spare cells, and no exercise
   is solvable by tapping the numbers/cells in the order they are shown
 * the subtraction family follows the same rules with a `−`: the difference is never 0,
   the minuend of a picture stays inside a countable group (at most 10 figures, at most 6
@@ -893,7 +1001,7 @@ type with three builders never fills the quiz next to a type with one. The type 
 reshuffled for every round, so the questions are interleaved in a random order instead
 of grouped by type. Without `tasks` the quiz still gets one question per builder of the
 selected types (so `?types=domino` alone gives exactly one exercise, and every
-`story`/`storyChoice` variant is shown).
+`story`/`storyChoice`/`storyRead` variant is shown).
 
 The picker has **two independent “🔊 Įgarsinti” checkboxes** (both off by default), so a
 generated test is silent until voice is asked for:
@@ -901,8 +1009,8 @@ generated test is silent until voice is asked for:
 - the one next to **⚙️ Užduotys: visos** sends `say=1` and voices **every question
 except the story problems** (`say=0` silences them);
 - the one inside the **Pasakojimai** group sends `sayStory=1` and voices the
-  `story`/`storyChoice` problems only — they are silent by default because a word
-  problem is meant to be **read**.
+  `story`/`storyChoice`/`storyMore`/`storyRead` problems only — they are silent by default
+  because a word problem is meant to be **read**.
 
 `gen_voice_apply()` applies the two; omitting a parameter leaves that group at its own
 default (a 🔊 everywhere except stories).

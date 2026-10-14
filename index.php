@@ -129,7 +129,7 @@ function api_dispatch(string $rest, string $method): void
             // Two INDEPENDENT read-aloud switches, both off by default:
             //  · ?say=1        - every question that is NOT a story problem
             //                    (the global checkbox next to „Užduotys: visos“)
-            //  · ?sayStory=1   - the story/storyChoice problems
+            //  · ?sayStory=1   - the story/storyChoice/storyMore/storyRead problems
             //                    (the checkbox inside the Pasakojimai group)
             // Absent (previews, old links) = leave each type's own default alone.
             $sayOthers = isset($_GET['say']) ? in_array((string) $_GET['say'], ['1', 'true', 'yes', 'on'], true) : null;

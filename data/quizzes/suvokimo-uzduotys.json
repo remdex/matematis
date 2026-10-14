@@ -1,0 +1,70 @@
+{
+  "id": "suvokimo-uzduotys",
+  "title": "Suvokimo užduotys",
+  "subtitle": "Perskaityk ir parašyk atsakymą",
+  "emoji": "📝",
+  "color": "violet",
+  "grade": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "storyRead",
+      "instruction": "Iš septynių atimk tris ir parašyk atsakymą.",
+      "answer": 4
+    },
+    {
+      "id": "q2",
+      "type": "storyRead",
+      "instruction": "Iš devynių atimk penkis ir parašyk atsakymą.",
+      "answer": 4
+    },
+    {
+      "id": "q3",
+      "type": "storyRead",
+      "instruction": "Prie 4 pridėk 5 ir parašyk atsakymą.",
+      "answer": 9
+    },
+    {
+      "id": "q4",
+      "type": "storyRead",
+      "instruction": "Prie šešių pridėk tris ir parašyk atsakymą.",
+      "answer": 9
+    },
+    {
+      "id": "q5",
+      "type": "storyRead",
+      "instruction": "Kas daugiau – 8 ar 5? Parašyk atsakymą.",
+      "answer": 8
+    },
+    {
+      "id": "q6",
+      "type": "storyRead",
+      "instruction": "Kas daugiau – septyni ar dešimt? Parašyk atsakymą.",
+      "answer": 10
+    },
+    {
+      "id": "q7",
+      "type": "storyRead",
+      "instruction": "Kas mažiau – 6 ar 2? Parašyk atsakymą.",
+      "answer": 2
+    },
+    {
+      "id": "q8",
+      "type": "storyRead",
+      "instruction": "Kas mažiau – keturi ar aštuoni? Parašyk atsakymą.",
+      "answer": 4
+    },
+    {
+      "id": "q9",
+      "type": "storyRead",
+      "instruction": "Iš dešimties atimk šešis ir parašyk atsakymą.",
+      "answer": 4
+    },
+    {
+      "id": "q10",
+      "type": "storyRead",
+      "instruction": "Prie 8 pridėk 2 ir parašyk atsakymą.",
+      "answer": 10
+    }
+  ]
+}

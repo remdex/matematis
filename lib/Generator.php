@@ -79,9 +79,21 @@ const GEN_STORY_THINGS = [
     ['kamuolius', 'kamuolių'],
     ['pieštukus', 'pieštukų'],
     ['žuvytes', 'žuvyčių'],
+    ['mašinėles', 'mašinėlių'],
     ['morkas', 'morkų'],
     ['bananus', 'bananų'],
     ['spurgas', 'spurgų'],
+];
+
+/**
+ * The Lithuanian number words 1-10 in the three cases a comprehension task needs:
+ * nominative ("du ar trys?"), genitive (after "iš" / "prie", "iš dviejų") and
+ * accusative (after "atimk" / "pridėk", "atimk tris").
+ */
+const GEN_NUMBER_WORDS = [
+    'nom' => [1 => 'vienas', 2 => 'du', 3 => 'trys', 4 => 'keturi', 5 => 'penki', 6 => 'šeši', 7 => 'septyni', 8 => 'aštuoni', 9 => 'devyni', 10 => 'dešimt'],
+    'gen' => [1 => 'vieno', 2 => 'dviejų', 3 => 'trijų', 4 => 'keturių', 5 => 'penkių', 6 => 'šešių', 7 => 'septynių', 8 => 'aštuonių', 9 => 'devynių', 10 => 'dešimties'],
+    'acc' => [1 => 'vieną', 2 => 'du', 3 => 'tris', 4 => 'keturis', 5 => 'penkis', 6 => 'šešis', 7 => 'septynis', 8 => 'aštuonis', 9 => 'devynis', 10 => 'dešimt'],
 ];
 
 const GEN_FOCUSES = ['compare', 'count', 'draw', 'sum', 'sub', 'mixed'];
@@ -100,19 +112,23 @@ const GEN_BATCH_TASKS_LIMIT = 1000;
 const GEN_TYPE_BUILDERS = [
     'compare' => [['gen_compare_figures', null], ['gen_compare_number', null], ['gen_compare_equality', null]],
     'compareGrid' => [['gen_compare_grid', null]],
+    'compareResults' => [['gen_compare_results', null]],
     'compareExpressions' => [['gen_compare_expressions', null]],
     'count' => [['gen_count', null]],
     'countAndCompare' => [['gen_count_compare', null]],
     'outline' => [['gen_outline', 'more'], ['gen_outline', 'less'], ['gen_outline', 'equal']],
     'crossOut' => [['gen_cross_out_number', null], ['gen_cross_out_symbol', null]],
     'write' => [['gen_write', null]],
-    'story' => [['gen_story', '+'], ['gen_story', '-'], ['gen_story', 'zero'], ['gen_story', 'gift'], ['gen_story', 'giftLeft']],
+    'story' => [['gen_story', '+'], ['gen_story', '-'], ['gen_story', 'lost'], ['gen_story', 'got'], ['gen_story', 'zero'], ['gen_story', 'gift'], ['gen_story', 'giftLeft']],
     'storyChoice' => [['gen_story_choice', 'who'], ['gen_story_choice', 'which'], ['gen_story_choice', 'equal'], ['gen_story_choice', 'change']],
+    'storyMore' => [['gen_story_more', null]],
+    'storyRead' => [['gen_story_read', '-'], ['gen_story_read', '+'], ['gen_story_read', 'compare']],
     'addPicture' => [['gen_add_picture', null]],
     'subtractPicture' => [['gen_subtract_picture', null]],
     'missingNumber' => [['gen_missing_number', '+']],
     'missingNumberSub' => [['gen_missing_number', '-']],
     'mixedOps' => [['gen_mixed_ops', null]],
+    'mixedCheck' => [['gen_mixed_check', null]],
     'domino' => [['gen_domino', null]],
     'subtractDomino' => [['gen_subtract_domino', null]],
     'pickAddends' => [['gen_pick_addends', null]],
@@ -136,13 +152,17 @@ const GEN_TYPE_GROUPS = [
         'countAndCompare' => 'Suskaičiuoti ir palyginti',
         'write' => 'Įrašyti skaičių',
         'mixedOps' => 'Sudėtis ir atimtis kartu',
+        'mixedCheck' => 'Pažymėti tinkamus veiksmus',
     ],
     'Veiksmai' => [
+        'compareResults' => 'Suskaičiuoti ir palyginti veiksmus (įrašyti skaičius)',
         'compareExpressions' => 'Suskaičiuoti ir palyginti veiksmus ( > < = )',
     ],
     'Pasakojimai' => [
         'story' => 'Pasakojimo uždavinys (įrašyti skaičių)',
         'storyChoice' => 'Pasakojimo uždavinys (pasirinkti atsakymą)',
+        'storyMore' => 'Pasakojimo uždavinys (kiek daugiau / mažiau)',
+        'storyRead' => 'Suvokimo užduotis (perskaityk ir parašyk)',
     ],
     'Braižymas' => [
         'outline' => 'Apibraukti kortelę',
@@ -179,11 +199,17 @@ const GEN_TYPE_GROUPS = [
  *   2  write / domino        the next or previous number; read pips and add
  *   3  compare / countAndCompare / addPicture / outline / subtractDomino
  *   4  compareGrid / crossOut / drawMissing / subtractPicture
- *   5  mixedOps / crossOutExtra
- *   6  missingNumber / missingNumberSub    find the hidden operand
+ *   5  mixedOps / crossOutExtra / storyRead
+ *      (storyRead is a one-line reading task: the numbers are words or digits,
+ *      and the child only decodes the sentence and does ± within 10)
+ *   6  missingNumber / missingNumberSub / compareResults   find a hidden operand
  *   7  pickAddends / multiCheck / subtractPair / subtractCheck   search a set
- *   8  compareExpressions / storyChoice    two operations, or a story with choices
- *   9  story                read a word problem, pick the operation, compute
+ *   8  mixedCheck / compareExpressions / storyChoice   two operations, or a story
+ *      with choices - mixedCheck is the check-list twin of mixedOps (the same
+ *      search as multiCheck/subtractCheck, but both signs mixed in one card)
+ *   9  story / storyMore    read a word problem, pick the operation, compute
+ *      (a "kiek daugiau/mažiau" story hides the subtraction behind a
+ *      comparison - the classic trap of the comparison problems)
  *  10  equalSums / equalDifferences        split a target into two equal equations
  *
  * The score is shown next to every chip in the picker and drives the order of the
@@ -204,15 +230,26 @@ const GEN_TYPE_COMPLEXITY = [
     'subtractPicture' => 4,
     'mixedOps' => 5,
     'crossOutExtra' => 5,
+    // A one-line reading task: the numbers are written as words (or all as
+    // digits) and the child only has to decode the sentence and do ± 10.
+    'storyRead' => 5,
     'missingNumber' => 6,
     'missingNumberSub' => 6,
+    // The scaffolded twin of compareExpressions: the same two operations, but the
+    // child first writes down what each side is - a smaller step than comparing
+    // two expressions in the head.
+    'compareResults' => 6,
     'pickAddends' => 7,
     'multiCheck' => 7,
     'subtractPair' => 7,
     'subtractCheck' => 7,
+    // Same search as the two check-lists above, but every row may be an addition
+    // or a subtraction, so the child has to work out the sign as well.
+    'mixedCheck' => 8,
     'compareExpressions' => 8,
     'storyChoice' => 8,
     'story' => 9,
+    'storyMore' => 9,
     'equalSums' => 10,
     'equalDifferences' => 10,
 ];
@@ -231,7 +268,7 @@ const GEN_GROUP_LOOK = [
 /** The old `focus` presets still work - each expands into a list of types. */
 const GEN_FOCUS_TYPES = [
     'compare' => ['compare', 'compareGrid', 'countAndCompare'],
-    'count' => ['count', 'countAndCompare', 'write', 'mixedOps'],
+    'count' => ['count', 'countAndCompare', 'write', 'mixedOps', 'mixedCheck'],
     'draw' => ['outline', 'crossOut'],
     'sum' => ['addPicture', 'domino', 'pickAddends', 'equalSums', 'multiCheck', 'drawMissing', 'missingNumber'],
     'sub' => ['subtractPicture', 'subtractDomino', 'subtractPair', 'equalDifferences', 'subtractCheck', 'crossOutExtra', 'missingNumberSub'],
@@ -687,15 +724,17 @@ function gen_expression_for(int $target, int $max): ?array
 }
 
 /**
- * Suskaičiuok abi puses ir įrašyk ženklą: `3 + 4 ? 9 − 2`. Each side is an
- * addition or a subtraction of its own (random), the child compares the two
- * results with  >  <  or  = .
+ * The rows of a "compare two equations" exercise: `3 + 4 ? 9 − 2`. Each side is
+ * an addition or a subtraction of its own (random), and the child works out how
+ * the two results relate.
  *
  * Rules: a row never prints the same expression twice (that would make "=" a
  * give-away), no row repeats, every fourth row is built as an "=" case - but
- * only one of them, so "=" is never the majority.
+ * only one of them, so "=" is never the majority. Shared by `compareExpressions`
+ * (only the sign is written) and its easier twin `compareResults` (the child
+ * writes both results down as well).
  */
-function gen_compare_expressions(int $i, int $max): array
+function gen_compare_rows(int $max): array
 {
     $rows = [];
     $asked = [];
@@ -718,13 +757,43 @@ function gen_compare_expressions(int $i, int $max): array
         $rows[] = ['id' => "e{$r}", 'left' => ['a' => $left['a'], 'b' => $left['b'], 'op' => $left['op']], 'right' => ['a' => $right['a'], 'b' => $right['b'], 'op' => $right['op']]];
     }
 
+    return $rows;
+}
+
+/**
+ * Suskaičiuok abi puses ir įrašyk ženklą: `3 + 4 ? 9 − 2`. The child compares the
+ * two results with  >  <  or  =  (the results themselves are not written down).
+ */
+function gen_compare_expressions(int $i, int $max): array
+{
     return [
         'id' => "q{$i}",
         'type' => 'compareExpressions',
         'instruction' => 'Suskaičiuok abi puses ir įrašyk reikiamą ženklą. > < arba =',
         // Always the three signs - "≠" is not an answer to "is this more or less".
         'symbols' => ['>', '<', '='],
-        'rows' => $rows,
+        'rows' => gen_compare_rows($max),
+    ];
+}
+
+/**
+ * The easier twin of the exercise above: the same rows, but the child writes the
+ * result of EVERY side into its own box first and only then picks the sign -
+ *
+ *      7 − 1   ↓   8 − 1
+ *      [ 6 ] > < = [ 7 ]
+ *
+ * so the comparison is always made between two numbers the child has just worked
+ * out. Same JSON as `compareExpressions`, which is why the rows are shared.
+ */
+function gen_compare_results(int $i, int $max): array
+{
+    return [
+        'id' => "q{$i}",
+        'type' => 'compareResults',
+        'instruction' => 'Suskaičiuok abi puses, įrašyk skaičius ir palygink. > < arba =',
+        'symbols' => ['>', '<', '='],
+        'rows' => gen_compare_rows($max),
     ];
 }
 
@@ -797,6 +866,8 @@ function gen_ucfirst(string $text): string
  * child writes the answer. Several variants appear:
  *   · subtraction  - "turėjo 5, atidavė 3, kiek liko?"
  *   · addition     - "turėjo 5, davė dar 3, kiek dabar turi?"
+ *   · lost         - "turėjo 5, bet 2 pametė, kiek dabar turi?" (a − b, no giver)
+ *   · got          - "turėjo 3, ir dar 3 gavo dovanų, kiek dabar turi?" (a + b)
  *   · zero         - "neturėjo, bet kitas davė 2, kiek dabar turi?" (0 + b)
  *   · gift         - "neturėjo, kitas turėjo 5 ir 2 atidavė, kiek dabar turi?" (0 + b)
  *   · giftLeft     - the same story, but asking the giver ("kiek liko?") (a − b)
@@ -808,7 +879,7 @@ function gen_ucfirst(string $text): string
 function gen_story(int $i, int $max, ?string $op = null): array
 {
     $max = gen_max($max);
-    $op = in_array($op, ['+', '-', 'zero', 'gift', 'giftLeft'], true) ? $op : gen_pick(['+', '-']);
+    $op = in_array($op, ['+', '-', 'lost', 'got', 'zero', 'gift', 'giftLeft'], true) ? $op : gen_pick(['+', '-']);
 
     [$name1, $dat1, $pron1] = gen_pick(GEN_STORY_NAMES);
     do {
@@ -835,6 +906,20 @@ function gen_story(int $i, int $max, ?string $op = null): array
             $story .= "Kiek {$gen} dabar turi {$name1}?";
             $answer = $b;
         }
+    } elseif ($op === 'lost') {
+        // "{name1} turėjo 5 obuolius, bet 2 pametė." → a − b (nobody took them)
+        $a = gen_int(3, $max);
+        $b = gen_int(2, $a - 1);
+        $story = "{$name1} turėjo {$a} " . gen_noun_form($a, $acc, $gen)
+            . ", bet {$b} pametė. Kiek {$gen} dabar turi {$name1}?";
+        $answer = $a - $b;
+    } elseif ($op === 'got') {
+        // "{name1} turėjo 3 obuolius ir dar 3 gavo dovanų." → a + b (gifts, no giver)
+        $a = gen_int(2, $max - 2);
+        $b = gen_int(2, $max - $a);
+        $story = "{$name1} turėjo {$a} " . gen_noun_form($a, $acc, $gen)
+            . " ir dar {$b} gavo dovanų. Kiek {$gen} dabar turi {$name1}?";
+        $answer = $a + $b;
     } elseif ($op === '-') {
         $a = gen_int(3, $max);
         $b = gen_int(2, $a - 1);
@@ -943,8 +1028,111 @@ function gen_story_choice(int $i, int $max, string $variant = 'who'): array
     ];
 }
 
-/* ------------------------------------------ addition / subtraction core -- */
+/**
+ * "Kiek daugiau / kiek mažiau?" (`storyMore`): two children and two DIFFERENT
+ * amounts, and the child writes the difference -
+ *
+ *   "Lukas turi 5 obuolius, Luknė turi 3 obuolius. Kiek daugiau obuolių turi Lukas?"
+ *
+ * The subtraction is hidden behind the comparison: neither amount is the answer
+ * and the sum is a trap, which is what makes this the hardest story (level 9).
+ * The question asks either about the child with more (daugiau) or the one with
+ * less (mažiau) - the answer is the same difference either way.
+ */
+function gen_story_more(int $i, int $max): array
+{
+    $max = gen_max($max);
+    [$name1] = gen_pick(GEN_STORY_NAMES);
+    do {
+        [$name2] = gen_pick(GEN_STORY_NAMES);
+    } while ($name2 === $name1);
+    [$acc, $gen] = gen_pick(GEN_STORY_THINGS);
+    // The amounts must differ (their difference is the answer) and both stay ≥ 2
+    // so the plural noun form always fits.
+    [$a, $b] = gen_pair(2, $max, 0);
+    [$moreName, $lessName] = $a > $b ? [$name1, $name2] : [$name2, $name1];
+    $hi = max($a, $b);
+    $lo = min($a, $b);
+    $ask = gen_int(0, 1) === 0 ? 'daugiau' : 'mažiau';
+    $askName = $ask === 'daugiau' ? $moreName : $lessName;
 
+    $story = "{$moreName} turi {$hi} " . gen_noun_form($hi, $acc, $gen)
+        . ", {$lessName} turi {$lo} " . gen_noun_form($lo, $acc, $gen) . '. '
+        . "Kiek {$ask} {$gen} turi {$askName}?";
+
+    return [
+        'id' => "q{$i}",
+        'type' => 'storyMore',
+        'instruction' => $story,
+        'answer' => $hi - $lo,
+    ];
+}
+
+/** The number word for 1-10 in the case a comprehension task needs. */
+function gen_number_word(int $n, string $case = 'nom'): string
+{
+    $forms = GEN_NUMBER_WORDS[$case] ?? GEN_NUMBER_WORDS['nom'];
+    return $forms[$n] ?? (string) $n;
+}
+
+/**
+ * Suvokimo užduotis (`storyRead`): a one-line reading task whose numbers are
+ * written as WORDS, or - randomly - ALL as DIGITS ("Iš dviejų atimk tris ir
+ * parašyk atsakymą." / "Iš 2 atimk 3 ir parašyk atsakymą."). The whole task
+ * keeps ONE style. Three variants:
+ *   · -        "Iš {a} atimk {b} ir parašyk atsakymą."    (a > b, answer ≥ 1)
+ *   · +        "Prie {a} pridėk {b} ir parašyk atsakymą."  (sum ≤ 10)
+ *   · compare  "Kas daugiau/mažiau – {a} ar {b}?"          (answer = the one asked)
+ * Every number stays within 1..10 - the number words a first grader reads - and
+ * the child always writes the answer as a digit.
+ */
+function gen_story_read(int $i, int $max, string $variant = '-'): array
+{
+    // The words ("vienas".."dešimt") stop at 10 whatever max was asked for.
+    $max = min(gen_max($max), 10);
+    $variant = in_array($variant, ['-', '+', 'compare'], true) ? $variant : '-';
+    $words = gen_int(0, 1) === 1; // one style for the whole task
+
+    $num = static function (int $n, string $case) use ($words): string {
+        return $words ? gen_number_word($n, $case) : (string) $n;
+    };
+
+    switch ($variant) {
+        case 'compare':
+            do {
+                $a = gen_int(1, $max);
+                $b = gen_int(1, $max);
+            } while ($a === $b);
+            $ask = gen_int(0, 1) === 0 ? 'daugiau' : 'mažiau';
+            $instruction = 'Kas ' . $ask . ' – ' . $num($a, 'nom') . ' ar ' . $num($b, 'nom') . '? Parašyk atsakymą.';
+            $answer = $ask === 'daugiau' ? max($a, $b) : min($a, $b);
+            break;
+
+        case '+':
+            $a = gen_int(1, $max - 1);
+            $b = gen_int(1, $max - $a);
+            $instruction = 'Prie ' . $num($a, 'gen') . ' pridėk ' . $num($b, 'acc') . ' ir parašyk atsakymą.';
+            $answer = $a + $b;
+            break;
+
+        case '-':
+        default:
+            $a = gen_int(2, $max);
+            $b = gen_int(1, $a - 1);
+            $instruction = 'Iš ' . $num($a, 'gen') . ' atimk ' . $num($b, 'acc') . ' ir parašyk atsakymą.';
+            $answer = $a - $b;
+            break;
+    }
+
+    return [
+        'id' => "q{$i}",
+        'type' => 'storyRead',
+        'instruction' => $instruction,
+        'answer' => $answer,
+    ];
+}
+
+/* ------------------------------------------ addition / subtraction core -- */
 /**
  * Do the maths of one equation. `+` and `−` are the only operations the
  * equation exercises use, so every builder below just picks one and shares the
@@ -1136,7 +1324,9 @@ function gen_domino(int $i, int $max): array
 function gen_multi_check(int $i, int $max): array
 {
     $cap = gen_addend_max($max);
-    $target = gen_int(2, $max);
+    // At least 4: below that only ONE sum reaches the target (2 = 1 + 1,
+    // 3 = 1 + 2), and the two fitting rows would print the same equation twice.
+    $target = gen_int(4, max(4, $max));
     $wantedFits = 2;
 
     $fit = static fn(): array => gen_split($target, $cap);
@@ -1171,6 +1361,99 @@ function gen_multi_check(int $i, int $max): array
         'id' => "q{$i}",
         'type' => 'multiCheck',
         'instruction' => "Pažymėk sudėties veiksmus, kuriais gautum skaičių {$target}.",
+        'target' => $target,
+        'items' => $items,
+    ];
+}
+
+/**
+ * Pažymėk veiksmus, kurių atsakymas nurodytas - ir sudėties, ir atimties (the
+ * mixed twin of `multiCheck` / `subtractCheck`). One card holds equations with
+ * both signs; at least one addition AND at least one subtraction always reach
+ * `target`, so the answer is never a single sign.
+ */
+function gen_mixed_check(int $i, int $max): array
+{
+    $max = gen_max($max);
+    $cap = gen_addend_max($max);
+    // Leave room for a subtraction that reaches the target (a - b = target).
+    $target = gen_int(2, max(2, $max - 1));
+
+    // A fitting addition: the two addends add up to `target`.
+    $fitPlus = static fn(): array => gen_split($target, $cap);
+    // A fitting subtraction: target + b is the minuend (so it stays <= max).
+    $fitMinus = static function () use ($max, $target): array {
+        $b = gen_int(1, max(1, $max - $target));
+        return [$target + $b, $b];
+    };
+    $missPlus = static function () use ($cap, $target): array {
+        for ($try = 0; $try < 60; $try++) {
+            $a = gen_int(1, $cap);
+            $b = gen_int(1, $cap);
+            if ($a + $b !== $target) {
+                return [$a, $b];
+            }
+        }
+        return [$cap, max(1, $cap - 1)];
+    };
+    $missMinus = static function () use ($max, $target): array {
+        for ($try = 0; $try < 60; $try++) {
+            $a = gen_int(2, $max);
+            $b = gen_int(1, $a - 1);
+            if ($a - $b !== $target) {
+                return [$a, $b];
+            }
+        }
+        return [$max, 1];
+    };
+
+    // Three of the rows fit (two additions + one subtraction, or the other way
+    // round), the rest do not; they are shuffled so the fitting rows are spread.
+    // How many distinct equations can reach the target at all decides which sign
+    // carries two of them - the sums run out next to `2 x cap` ("9 + 10" is the
+    // only sum that gives 19) and the differences next to `max`, and two
+    // identical equations must never end up on the same card.
+    $plusSpace = intdiv($target, 2) - max(1, $target - $cap) + 1;
+    $doublePlus = $plusSpace >= 2;
+    $doubleMinus = $max - $target >= 2;
+    $fits = $doublePlus && $doubleMinus
+        ? gen_pick([['+', '+', '-'], ['+', '-', '-']])
+        : ($doublePlus ? ['+', '+', '-'] : ($doubleMinus ? ['+', '-', '-'] : ['+', '-']));
+    $plan = [];
+    foreach ($fits as $sign) {
+        $plan[] = ['op' => $sign, 'fits' => true];
+    }
+    $boxes = gen_int(6, 9);
+    while (count($plan) < $boxes) {
+        $plan[] = ['op' => gen_pick(['+', '-']), 'fits' => false];
+    }
+    shuffle($plan);
+
+    $items = [];
+    $asked = [];
+    foreach ($plan as $step) {
+        $plus = $step['op'] === '+';
+        [$a, $b] = [1, 1];
+        for ($try = 0; $try < 60; $try++) {
+            if ($plus) {
+                [$a, $b] = $step['fits'] ? $fitPlus() : $missPlus();
+            } else {
+                [$a, $b] = $step['fits'] ? $fitMinus() : $missMinus();
+            }
+            // "3 + 4" and "4 + 3" are the same exercise; subtracting is not commutative.
+            $key = $plus ? ($a <= $b ? "{$a}+{$b}" : "{$b}+{$a}") : "{$a}-{$b}";
+            if (!isset($asked[$key])) {
+                $asked[$key] = true;
+                break;
+            }
+        }
+        $items[] = ['id' => 'c' . (count($items) + 1), 'a' => $a, 'b' => $b, 'op' => $step['op']];
+    }
+
+    return [
+        'id' => "q{$i}",
+        'type' => 'mixedCheck',
+        'instruction' => "Pažymėk veiksmus, kurių atsakymas yra {$target}.",
         'target' => $target,
         'items' => $items,
     ];
@@ -1644,9 +1927,9 @@ function quiz_generate_batch(mixed $types = [], int $max = 10, int $count = 1, i
  * Backs the two "įgarsinti" checkboxes in the picker (both off by default):
  *  - $others: the global one next to "Užduotys: visos" - every question that
  *    is NOT a story problem (true = voice it, false = silence it);
- *  - $story:  the one inside the Pasakojimai group - the story/storyChoice
- *    problems only (they are silent by default: a word problem is meant to be
- *    READ, so this is what voices them).
+ *  - $story:  the one inside the Pasakojimai group - the story/storyChoice/
+ *    storyMore/storyRead problems only (they are silent by default: a word
+ *    problem is meant to be READ, so this is what voices them).
  *
  * A null argument keeps that group's own default (a speaker everywhere but
  * stories).
@@ -1662,7 +1945,7 @@ function gen_voice_apply(array &$quizzes, ?bool $others, ?bool $story): void
             continue;
         }
         foreach ($quiz['questions'] as $index => $question) {
-            $isStory = in_array($question['type'] ?? '', ['story', 'storyChoice'], true);
+            $isStory = in_array($question['type'] ?? '', ['story', 'storyChoice', 'storyMore', 'storyRead'], true);
             $value = $isStory ? $story : $others;
             if ($value !== null) {
                 $quiz['questions'][$index]['say'] = $value;

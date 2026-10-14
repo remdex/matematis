@@ -2,9 +2,9 @@
  * quiz-types.js — every question type the renderer knows about.
  *
  * Types: compare · compareGrid · compareExpressions · count · countAndCompare ·
- *        outline · crossOut · write · story · storyChoice · addPicture · subtractPicture ·
+ *        outline · crossOut · write · story · storyChoice · storyMore · storyRead · addPicture · subtractPicture ·
  *        missingNumber · missingNumberSub · mixedOps · domino · subtractDomino ·
- *        multiCheck · subtractCheck · pickAddends · subtractPair · equalSums ·
+ *        multiCheck · subtractCheck · mixedCheck · pickAddends · subtractPair · equalSums ·
  *        equalDifferences · drawMissing · crossOutExtra · match
  *
  * The addition and subtraction exercises are the same exercises with another
@@ -696,11 +696,20 @@ function bankType({ name, label, op, equal, defaultInstruction }) {
 }
 
 /**
- * `multiCheck` and `subtractCheck`: tick every equation that gives `target`
- * (any number of them). The printed `a + b` / `a − b` may be replaced by the
- * author's `text`.
+ * `multiCheck` / `subtractCheck` and their mixed twin `mixedCheck`: tick every
+ * equation that gives `target` (any number of them). The printed `a + b` /
+ * `a − b` may be replaced by the author's `text`.
+ *
+ * `mixed` is the only difference: with it every item carries its own sign
+ * (`{ a, b, op }`, `op` = "+" or "-"), so one card holds both additions and
+ * subtractions. Without it the whole question shares the type's `op`.
  */
-function checkType({ name, label, op, defaultInstruction }) {
+function checkType({ name, label, op, defaultInstruction, mixed = false }) {
+  /** The sign of one item: its own when the type mixes, else the type's. */
+  const signOf = (it) => {
+    if (!mixed) return op;
+    return (it && it.op) === '-' ? '-' : '+';
+  };
   return {
     name,
     label,
@@ -713,26 +722,35 @@ function checkType({ name, label, op, defaultInstruction }) {
           const a = Math.trunc(Number(it.a));
           const b = Math.trunc(Number(it.b));
           if (!Number.isFinite(a) || !Number.isFinite(b)) return null;
-          return { id: String(it.id || `c${i + 1}`), a, b, text: String(it.text || `${a} ${opSign(op)} ${b}`) };
+          const itemOp = signOf(it);
+          return { id: String(it.id || `c${i + 1}`), a, b, op: itemOp, text: String(it.text || `${a} ${opSign(itemOp)} ${b}`) };
         })
         .filter(Boolean);
       if (!q.items.length) {
-        q.items = op === '-'
-          ? [{ id: 'c1', a: 6, b: 2, text: '6 − 2' }, { id: 'c2', a: 5, b: 3, text: '5 − 3' }]
-          : [{ id: 'c1', a: 4, b: 4, text: '4 + 4' }, { id: 'c2', a: 3, b: 3, text: '3 + 3' }];
+        q.items = mixed
+          ? [
+              { id: 'c1', a: 4, b: 4, op: '+', text: '4 + 4' },
+              { id: 'c2', a: 6, b: 2, op: '-', text: '6 − 2' },
+              { id: 'c3', a: 3, b: 5, op: '+', text: '3 + 5' },
+              { id: 'c4', a: 7, b: 2, op: '-', text: '7 − 2' },
+            ]
+          : op === '-'
+            ? [{ id: 'c1', a: 6, b: 2, op: '-', text: '6 − 2' }, { id: 'c2', a: 5, b: 3, op: '-', text: '5 − 3' }]
+            : [{ id: 'c1', a: 4, b: 4, op: '+', text: '4 + 4' }, { id: 'c2', a: 3, b: 3, op: '+', text: '3 + 3' }];
       }
+      if (!mixed) q.items.forEach((it) => { it.op = op; });
       const target = Math.trunc(Number(q.target));
-      q.target = Number.isFinite(target) ? target : opApply(q.items[0].a, q.items[0].b, op);
+      q.target = Number.isFinite(target) ? target : opApply(q.items[0].a, q.items[0].b, q.items[0].op);
       if (q.answer !== undefined && q.answer !== null) {
         q.answer = (Array.isArray(q.answer) ? q.answer : [q.answer]).map(String);
       }
     },
     answer(q) {
       if (Array.isArray(q.answer)) return q.answer;
-      return q.items.filter((it) => opApply(it.a, it.b, op) === q.target).map((it) => it.id);
+      return q.items.filter((it) => opApply(it.a, it.b, it.op) === q.target).map((it) => it.id);
     },
     answerText(q) {
-      const fits = q.items.filter((it) => opApply(it.a, it.b, op) === q.target);
+      const fits = q.items.filter((it) => opApply(it.a, it.b, it.op) === q.target);
       return fits.length ? `Tinka: ${fits.map((it) => it.text).join(', ')}` : 'Nėra tinkančio veiksmo';
     },
     revealText: () => 'Tinkami veiksmai pažymėti žaliai ✅',
@@ -742,7 +760,7 @@ function checkType({ name, label, op, defaultInstruction }) {
       const node = h('div', { class: 'q-block q-multi' });
       node.insertAdjacentHTML(
         'beforeend',
-        `<p class="prompt">${op === '-' ? 'Skirtumas' : 'Suma'} turi būti ${q.target}</p>`,
+        `<p class="prompt">${mixed ? 'Rezultatas' : op === '-' ? 'Skirtumas' : 'Suma'} turi būti ${q.target}</p>`,
       );
       const list = h('div', { class: 'check-list', 'data-count': String(q.items.length) });
       const shown = new Map();
@@ -1036,6 +1054,34 @@ function expressionText(expr) {
 }
 
 /**
+ * The `rows` of a compareExpressions / compareResults question: every row is two
+ * equations (left and right) plus the sign that belongs between their results.
+ */
+function normalizeExpressionRows(q) {
+  q.symbols = symbolsOf(q);
+  const rows = Array.isArray(q.rows) ? q.rows : [];
+  q.rows = rows
+    .map((row, i) => {
+      const r = row && typeof row === 'object' ? row : {};
+      const left = expressionOf(r.left);
+      const right = expressionOf(r.right);
+      if (!left || !right) return null;
+      return {
+        id: String(r.id || `e${i + 1}`),
+        left,
+        right,
+        answer: symbolFor(left.value, right.value, q.symbols),
+      };
+    })
+    .filter(Boolean);
+  if (!q.rows.length) {
+    const left = expressionOf({ a: 3, b: 4, op: '+' });
+    const right = expressionOf({ a: 9, b: 2, op: '-' });
+    q.rows = [{ id: 'e1', left, right, answer: symbolFor(left.value, right.value, q.symbols) }];
+  }
+}
+
+/**
  * Suskaičiuok abi puses ir įrašyk ženklą: `3 + 4 ? 9 − 2`. Every side is an
  * addition or a subtraction of its own and the child compares the two results
  * with  >  <  or  = . The empty box of a row is filled by one shared row of
@@ -1047,27 +1093,7 @@ register({
   label: 'Suskaičiuoti ir palyginti veiksmus ( > < = )',
   defaultInstruction: 'Suskaičiuok abi puses ir įrašyk reikiamą ženklą.',
   normalize(q) {
-    q.symbols = symbolsOf(q);
-    const rows = Array.isArray(q.rows) ? q.rows : [];
-    q.rows = rows
-      .map((row, i) => {
-        const r = row && typeof row === 'object' ? row : {};
-        const left = expressionOf(r.left);
-        const right = expressionOf(r.right);
-        if (!left || !right) return null;
-        return {
-          id: String(r.id || `e${i + 1}`),
-          left,
-          right,
-          answer: symbolFor(left.value, right.value, q.symbols),
-        };
-      })
-      .filter(Boolean);
-    if (!q.rows.length) {
-      const left = expressionOf({ a: 3, b: 4, op: '+' });
-      const right = expressionOf({ a: 9, b: 2, op: '-' });
-      q.rows = [{ id: 'e1', left, right, answer: symbolFor(left.value, right.value, q.symbols) }];
-    }
+    normalizeExpressionRows(q);
   },
   answer(q) {
     return q.rows.map((r) => r.answer);
@@ -1149,6 +1175,150 @@ register({
         revealed = false;
         picks.fill(null);
         active = 0;
+        paint();
+      },
+      destroy() {},
+    };
+  },
+});
+
+/* 2c. compareResults ----------------------------------------------------- */
+
+/**
+ * The SCAFFOLDED version of `compareExpressions`. The two equations are printed
+ * one above the other and the child first works out (and writes down) the result
+ * of each side, then picks the sign between the two numbers:
+ *
+ *        7 − 1        ↓        8 − 1
+ *        [ 6 ]     [ > < = ]     [ 7 ]
+ *
+ * Same JSON as `compareExpressions` (rows of two equations), so the one exercise
+ * can be switched to the other just by changing `type`.
+ */
+register({
+  name: 'compareResults',
+  label: 'Suskaičiuoti ir palyginti veiksmus (įrašyti skaičius)',
+  defaultInstruction: 'Suskaičiuok abi puses, įrašyk skaičius ir palygink.',
+  normalize(q) {
+    normalizeExpressionRows(q);
+  },
+  answer(q) {
+    return q.rows.map((r) => [String(r.left.value), r.answer, String(r.right.value)]);
+  },
+  answerText(q) {
+    return q.rows.map((r) => `${expressionText(r.left)} ${r.answer} ${expressionText(r.right)}`).join('  ·  ');
+  },
+  create(q, ctx) {
+    const picks = new Array(q.rows.length).fill(null);
+    let active = 0;
+    let revealed = false;
+
+    const node = h('div', { class: 'q-block q-cmp-results' });
+    const list = h('div', { class: 'add-rows' });
+
+    // Two number boxes per row (the result of the left and of the right side);
+    // all of them share the single number pad at the bottom.
+    const inputs = createNumberInputs({
+      slots: q.rows.flatMap((row) => [{ id: `${row.id}x` }, { id: `${row.id}y` }]),
+      onChanged: () => ctx.changed(),
+    });
+    const cells = [...inputs.el.querySelectorAll('.input-cell')];
+    let next = 0;
+
+    const slots = [];
+    q.rows.forEach((row, i) => {
+      const rowEl = h('div', { class: 'add-row' });
+      const top = h('div', { class: 'cre-top' });
+      top.insertAdjacentHTML('beforeend', expressionHtml(row.left));
+      top.insertAdjacentHTML('beforeend', '<span class="cre-arrow" aria-hidden="true">↓</span>');
+      top.insertAdjacentHTML('beforeend', expressionHtml(row.right));
+      rowEl.appendChild(top);
+
+      const bottom = h('div', { class: 'cre-bottom' });
+      const leftCell = cells[next++];
+      const rightCell = cells[next++];
+      if (leftCell) {
+        leftCell.classList.add('input-cell--eq');
+        bottom.appendChild(leftCell);
+      }
+      const slot = symbolSlot({ pick: true });
+      slot.el.addEventListener('click', () => {
+        if (revealed) return;
+        active = i;
+        paint();
+        liftAboveBar(picker.el);
+      });
+      bottom.appendChild(slot.el);
+      if (rightCell) {
+        rightCell.classList.add('input-cell--eq');
+        bottom.appendChild(rightCell);
+      }
+      rowEl.appendChild(bottom);
+      list.appendChild(rowEl);
+      slots.push(slot);
+    });
+    node.appendChild(list);
+
+    const picker = createSymbolPicker({
+      symbols: q.symbols,
+      onPick: (sym) => {
+        if (revealed) return;
+        picks[active] = sym;
+        const nextEmpty = picks.indexOf(null);
+        if (nextEmpty !== -1) active = nextEmpty;
+        paint();
+        ctx.changed();
+        liftAboveBar(picker.el);
+      },
+    });
+    node.appendChild(picker.el);
+    node.appendChild(inputs.el);
+
+    function paint() {
+      slots.forEach((slot, i) => {
+        slot.set(picks[i]);
+        slot.el.classList.toggle('is-active', i === active && !revealed);
+      });
+      picker.mark(picks[active]);
+    }
+    paint();
+
+    return {
+      el: node,
+      givenText: () =>
+        q.rows
+          .map((r, i) => `${inputs.get(`${r.id}x`) || '?'} ${picks[i] || '?'} ${inputs.get(`${r.id}y`) || '?'}`)
+          .join('  ·  '),
+      check: () =>
+        q.rows.every(
+          (r, i) =>
+            inputs.get(`${r.id}x`) === String(r.left.value) &&
+            inputs.get(`${r.id}y`) === String(r.right.value) &&
+            picks[i] === r.answer,
+        ),
+      touched: () => inputs.touched() || picks.some((p) => p !== null),
+      flash(kind) {
+        inputs.flash(kind);
+        for (const slot of slots) {
+          slot.el.classList.remove('flash-ok', 'flash-bad');
+          void slot.el.offsetWidth;
+          slot.el.classList.add(kind === 'ok' ? 'flash-ok' : 'flash-bad');
+        }
+        picker.flash(kind);
+      },
+      reveal() {
+        revealed = true;
+        inputs.reveal(q.rows.flatMap((r) => [String(r.left.value), String(r.right.value)]));
+        q.rows.forEach((r, i) => {
+          picks[i] = r.answer;
+        });
+        paint();
+      },
+      clear() {
+        revealed = false;
+        picks.fill(null);
+        active = 0;
+        inputs.reset();
         paint();
       },
       destroy() {},
@@ -1617,6 +1787,28 @@ register({
   label: 'Pasakojimo uždavinys (pasirinkti atsakymą)',
 });
 
+// The difference story - "Kiek daugiau obuolių turi Lukas?" - again the same
+// widget with its own chip. The answer is the DIFFERENCE of the two amounts
+// (typed on the number pad), while the story text carries the comparison the
+// child has to translate into "−".
+register({
+  ...storyDef,
+  name: 'storyMore',
+  label: 'Pasakojimo uždavinys (kiek daugiau / mažiau)',
+});
+
+// The "suvokimo užduotis" (comprehension task): a one-line reading task whose
+// numbers are WORDS ("Iš dviejų atimk tris ir parašyk atsakymą.") or digits,
+// while the whole task keeps ONE style. It is about decoding the sentence, so
+// it is silent by default like the other story types; the answer is a number
+// typed on the shared pad (the numeric branch of the story widget).
+register({
+  ...storyDef,
+  name: 'storyRead',
+  label: 'Suvokimo užduotis (perskaityk ir parašyk)',
+  defaultInstruction: 'Perskaityk ir atsakyk į klausimą.',
+});
+
 /* 7b. missingNumber / missingNumberSub ----------------------------------- */
 
 /**
@@ -1939,7 +2131,7 @@ register(dominoType({
   defaultInstruction: 'Suskaičiuok taškus abiejose pusėse ir parašyk skirtumą.',
 }));
 
-/* 10. multiCheck / subtractCheck ----------------------------------------- */
+/* 10. multiCheck / subtractCheck / mixedCheck ---------------------------- */
 register(checkType({
   name: 'multiCheck',
   label: 'Pažymėti teisingus veiksmus',
@@ -1952,6 +2144,14 @@ register(checkType({
   label: 'Pažymėti teisingus atimties veiksmus',
   op: '-',
   defaultInstruction: 'Pažymėk atimties veiksmus, kurių atsakymas yra nurodytas skaičius.',
+}));
+
+register(checkType({
+  name: 'mixedCheck',
+  label: 'Pažymėti teisingus veiksmus (sudėtis ir atimtis)',
+  op: '+',
+  mixed: true,
+  defaultInstruction: 'Pažymėk veiksmus, kurių atsakymas yra nurodytas skaičius.',
 }));
 
 /* 11. pickAddends / subtractPair ----------------------------------------- */
